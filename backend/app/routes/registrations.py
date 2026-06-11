@@ -11,6 +11,6 @@ async def register_event():
 async def list_registerations():
     pass
 
-@registration_router.get("/{event_id}/count")
+@registration_router.get("/{event_id}/registrations/count")
 async def registration_count():
     pass

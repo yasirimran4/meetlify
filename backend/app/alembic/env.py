@@ -26,7 +26,7 @@ if config.config_file_name is not None:
 
 config.set_main_option(
     "sqlalchemy.url",
-    settings.DATABASE_URL
+    settings.SQL_ALCHEMY_URL
 )
 
 target_metadata = Base.metadata

@@ -1,4 +1,4 @@
-from core.database import Base
+from app.core.database import Base
 from sqlalchemy import Column, Integer,String ,DateTime  , Enum as SQLEnum, Text
 from sqlalchemy.sql import func
 from time import timezone

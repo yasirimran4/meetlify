@@ -1,7 +1,7 @@
 
 from fastapi import APIRouter , Depends
-from services.event import create_event_service , get_all_events_service
-from core.dependency import get_db
+from app.services.event import create_event_service , get_all_events_service
+from app.core.dependency import get_db
 from sqlalchemy.ext.asyncio import AsyncSession
 
 event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
