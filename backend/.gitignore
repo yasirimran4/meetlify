@@ -6,6 +6,8 @@ __pycache__/
 *.pyo
 *.pyd
 .Python
+/Alembic
+.ini
 
 # ======================
 # Virtual Environment
