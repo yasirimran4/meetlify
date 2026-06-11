@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 import uvicorn
 from core.config import settings
-from api.routes.events import event_router
-from app.api.routes.registrations import registration_router
+from app.routes.events import event_router
+from app.routes.registrations import registration_router
 
 app = FastAPI(title="Meetlify Event Management System",version='1.0.1')
 
