@@ -1,0 +1,56 @@
+# ======================
+# Python
+# ======================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# ======================
+# Virtual Environment
+# ======================
+.venv/
+venv/
+env/
+
+# ======================
+# Environment Variables (VERY IMPORTANT)
+# ======================
+.env
+.env.*
+
+# ======================
+# IDE / Editor
+# ======================
+.vscode/
+.idea/
+
+# ======================
+# Testing / Coverage
+# ======================
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ======================
+# Migrations (optional safe keep OR ignore depending workflow)
+# If using Alembic properly, DO NOT ignore migrations
+# ======================
+
+# ======================
+# OS files
+# ======================
+.DS_Store
+Thumbs.db
+
+# ======================
+# Logs
+# ======================
+*.log
+logs/
+
+# ======================
+# Docker (local artifacts)
+# ======================
+docker-compose.override.yml

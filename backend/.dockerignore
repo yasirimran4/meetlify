@@ -1,0 +1,57 @@
+# ======================
+# Git
+# ======================
+.git/
+.gitignore
+
+# ======================
+# Python cache
+# ======================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# ======================
+# Virtual environment
+# (NEVER copy local venv into container)
+# ======================
+.venv/
+venv/
+env/
+
+# ======================
+# Environment files (security risk)
+# ======================
+.env
+.env.*
+
+# ======================
+# Tests (optional, keeps image smaller)
+# ======================
+tests/
+pytest_cache/
+
+# ======================
+# IDE files
+# ======================
+.vscode/
+.idea/
+
+# ======================
+# Local docs / noise
+# ======================
+README.md
+*.md
+
+# ======================
+# Logs
+# ======================
+logs/
+*.log
+
+# ======================
+# Docker files not needed inside image
+# ======================
+docker-compose.yml
+Dockerfile
