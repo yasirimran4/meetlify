@@ -23,8 +23,10 @@ class EventAlreadyPublishedError(AppException):
 
 class RegistrationDeadlinePassedError(AppException):
 
-    def __init__(
-        self,
-        message="Registration deadline has passed"
-    ):
-        super().__init__(message)
+    def __init__(self):
+        super().__init__(message="Registration deadline has passed",status_code=404)        
+
+class InvalidFomrat(AppException):
+
+    def __init__(self):
+        super().__init__(message="Invalid Format",status_code=404)        

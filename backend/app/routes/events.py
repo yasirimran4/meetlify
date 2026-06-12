@@ -1,5 +1,5 @@
 
-from fastapi import APIRouter , Depends , UploadFile , File
+from fastapi import APIRouter , Depends , UploadFile , File , HTTPException
 from core.dependency import get_db ,get_admin
 from sqlalchemy.ext.asyncio import AsyncSession
 from services.event import EventService
@@ -12,8 +12,10 @@ event_service = EventService()
 
 @event_router.post('/')
 async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db),admin : User = Depends(get_admin)):
-    print(admin)
-    return await event_service.create_event(request,session)
+    try:
+        return await event_service.create_event(request,session)
+    except HTTPException:
+        raise HTTPException(status_code=400,detail="Something went wrong")
 
 @event_router.post('/upload-thumbnail')
 async def upload_thumbnail(thumbnail : UploadFile = File(...),session: AsyncSession = Depends(get_db),admin : User = Depends(get_admin)):

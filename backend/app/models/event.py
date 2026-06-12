@@ -12,7 +12,6 @@ class Status(str,Enum):
     CANCELLED = "cancelled"
     COMPLETED = "completed"
 
-
 class Event(Base):
 
     __tablename__ = "events"

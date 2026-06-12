@@ -1,6 +1,14 @@
-from core.dependency import get_db
-from fastapi import Depends
 
 class EventRepository:
-    async def create_event(self,request,session):
-        return {"Request" : request }
+    async def create_event(self,event,session):
+        try:
+            session.add(event)
+
+            await session.commit()
+
+            await session.refresh(event)
+
+            return event
+
+        except Exception as e:
+            print("DB Error: ",str(e)) 

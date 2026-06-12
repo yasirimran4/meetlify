@@ -3,7 +3,6 @@ from sqlalchemy import Column, Integer,String,ForeignKey ,DateTime , UniqueConst
 from sqlalchemy.sql import func
 from time import timezone
 from sqlalchemy.orm import relationship 
-from enum import Enum
 
 class Registration(Base):
 
