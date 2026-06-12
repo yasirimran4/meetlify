@@ -1,6 +1,6 @@
 # exceptions/registration.py
 
-from app.exceptions.base import AppException
+from exceptions.base import AppException
 
 
 class EventFullError(AppException):

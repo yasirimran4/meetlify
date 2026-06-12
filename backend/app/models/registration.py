@@ -1,4 +1,4 @@
-from app.core.database import Base
+from core.database import Base
 from sqlalchemy import Column, Integer,String,ForeignKey ,DateTime , UniqueConstraint
 from sqlalchemy.sql import func
 from time import timezone

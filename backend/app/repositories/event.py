@@ -1,4 +1,6 @@
-from app.core.dependency import get_db
+from core.dependency import get_db
 from fastapi import Depends
-async def create_event_repo(session):
-    return {"Session" : session}
+
+class EventRepository:
+    async def create_event(self,request,session):
+        return {"Request" : request }

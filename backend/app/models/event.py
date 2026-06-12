@@ -1,4 +1,4 @@
-from app.core.database import Base
+from core.database import Base
 from sqlalchemy import Column, Integer,String ,DateTime  , Enum as SQLEnum, Text
 from sqlalchemy.sql import func
 from time import timezone
@@ -25,6 +25,9 @@ class Event(Base):
     status =  Column(SQLEnum(Status),default=Status.DRAFT,nullable=False)
     deadline = Column(DateTime(timezone=True),nullable=False)
     event_date_time = Column(DateTime(timezone=True),nullable=False)
+    thumbnail_url = Column(String(500),nullable=True)
+    thumbnail_public_id = Column(String(255),nullable=True)
+    video_url = Column(String(500),nullable=True)
     
     created_at = Column(DateTime(timezone=True),server_default=func.now())
     updated_at = Column(DateTime(timezone=True),server_default=func.now(),onupdate=func.now())

@@ -1,7 +1,7 @@
-from app.repositories.auth import AuthRepository
-from app.exceptions.auth import *
-from app.utils.password_util import verify_password
-from app.utils.jwt_util import *
+from repositories.auth import AuthRepository
+from exceptions.auth import *
+from utils.password_util import verify_password
+from utils.jwt_util import *
 
 auth_repo = AuthRepository()
 

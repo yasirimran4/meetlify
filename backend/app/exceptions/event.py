@@ -1,6 +1,6 @@
 # exceptions/event.py
 
-from app.exceptions.base import AppException
+from exceptions.base import AppException
 
 
 class EventNotFoundError(AppException):

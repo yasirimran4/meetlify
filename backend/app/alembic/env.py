@@ -5,7 +5,8 @@ from sqlalchemy import pool
 from core.database import Base
 from models.event import Event
 from models.user import User
-from app.models.registration import Registration
+from models.registration import Registration
+
 from core.config import settings
 
 from alembic import context

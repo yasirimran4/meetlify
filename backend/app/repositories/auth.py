@@ -1,12 +1,19 @@
 
 from sqlalchemy import select
-from app.models.user import User
+from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
 class AuthRepository:
 
     async def find_user_by_email(self,email,session:AsyncSession):
         user = await session.execute(select(User).where(User.email == email))
         return user.scalar_one_or_none()
+    
+    async def find_user_by_id(self,id:int,session:AsyncSession):
+        try:
+            user = await session.execute(select(User).where(User.id == id))
+            return user.scalar_one_or_none()
+        except Exception as e:
+            print("DB Error : ",str(e))    
     
     async def create_user(self,user,session):
 

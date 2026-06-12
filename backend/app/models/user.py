@@ -1,5 +1,5 @@
 from sqlalchemy import Column , String , Integer  , DateTime 
-from app.core.database import Base
+from core.database import Base
 from sqlalchemy.sql import func
 
 class User(Base):   # Just for admin 
