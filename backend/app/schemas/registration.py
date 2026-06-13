@@ -7,5 +7,5 @@ class CreateRegistration:
     email : Annotated[EmailStr,Field(...)]
     current_role : Annotated[str,Field(...,min_length=5,max_length=100,title="Current Role",description="Speaker name")] 
     organization : Annotated[str,Field(...,title="Organization ",description="Organization of member")] 
-    semester : Annotated[datetime,Field(...,title="Sememster.")]
+    semester : Annotated[str,Field(...,title="Semester.")]
     event_id : Annotated[int,Field(...,title="Event ID")] 

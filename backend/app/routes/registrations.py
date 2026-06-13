@@ -1,18 +1,18 @@
 
-from fastapi import APIRouter
+from fastapi import APIRouter , Depends
 from schemas.registration import CreateRegistration
+from services.registration import RegitrationService
+from core.dependency import get_db 
+from sqlalchemy.ext.asyncio import AsyncSession
+
 
 registration_router = APIRouter(prefix='/api/v1/events' ,tags=["Registeration"])
-
+registration_serive = RegitrationService()
 
 @registration_router.post("/{event_id}/register")
-async def register_event(payload : CreateRegistration):
-    pass
+async def register_event(event_id :int , payload : CreateRegistration,session: AsyncSession = Depends(get_db)):
+    return await registration_serive.register_event(event_id,payload,session)
 
 @registration_router.get("/{event_id}/registrations")
-async def list_registerations(event_id : int):
-    pass
-
-@registration_router.get("/{event_id}/registrations/count")
-async def registration_count(event_id : int):
-    pass
+async def list_registrations(event_id : int,session: AsyncSession = Depends(get_db)):
+    return await registration_serive.list_registrations(event_id,session)
