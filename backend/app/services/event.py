@@ -1,10 +1,12 @@
 from repositories.event import EventRepository
-from exceptions.event import InvalidFomrat
+from exceptions.event import InvalidFomrat , EventNotFoundError
 from services.cloudinary_service import CloudinaryService
 from models.event import Event 
 from models.registration import Registration
+
 event_repo = EventRepository()   # object to interact with db
 cloud_service = CloudinaryService()
+
 class EventService:
     async def create_event(self,payload, session ):
         event = Event(
@@ -32,3 +34,45 @@ class EventService:
         
         return await cloud_service.upload_image(thumbnail)
 
+    async def get_upcoming_events(self,page,limit,search,session):
+        return await event_repo.get_upcoming_events(page,limit,search,session)
+    
+    async def get_past_events(self,page,limit,search,session):
+        return await event_repo.get_past_events(page,limit,search,session)
+    
+    async def get_single_event(self,session,event_id):
+        event = await event_repo.get_single_event(session,event_id) 
+
+        if event is None:
+            raise EventNotFoundError()
+
+        return event
+    
+    async def update_event(self,session,event_id,payload):
+        update_data = payload.model_dump()
+        update_data["thumbnail_url"] = str(update_data["thumbnail_url"])
+        update_data["meeting_link"] = str(update_data["meeting_link"])
+        event = await event_repo.update_event(session,event_id,update_data) 
+
+        if event is None:
+            raise EventNotFoundError()
+
+        return event
+    
+    async def change_status(self,session,event_id,status):
+
+        event = await event_repo.change_status(session,event_id,status) 
+
+        if event is None:
+            raise EventNotFoundError()
+
+        return {"status":status}
+    
+    async def delete_event(self,session,event_id):
+        event = await event_repo.delete_event(session,event_id) 
+
+        if event is None:
+            raise EventNotFoundError()
+
+        return event
+       
