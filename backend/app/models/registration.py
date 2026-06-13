@@ -16,7 +16,6 @@ class Registration(Base):
     semester = Column(String(100),nullable=True)
 
     created_at = Column(DateTime(timezone=True),server_default=func.now())
-    max_seats = Column(Integer,default=100,nullable=False)
     # relationship
     event_id = Column(Integer,ForeignKey("events.id"),nullable=False,index=True)
     event = relationship("Event",back_populates="registrations")
