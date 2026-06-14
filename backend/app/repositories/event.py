@@ -68,6 +68,17 @@ class EventRepository:
         except Exception as e:
             print("DB Error: ",str(e)) 
              
+    async def upload_video_url(self,session,event_id,video_url):
+
+        try:
+
+            event = await session.execute(update(Event).where(Event.id == event_id).values(video_url = video_url).returning(Event))
+            await session.commit()
+
+            return event.scalar_one_or_none()
+
+        except Exception as e:
+            print("DB Error: ",str(e))
 
     async def delete_event(self,session,event_id):
 

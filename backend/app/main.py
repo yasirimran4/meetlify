@@ -13,12 +13,12 @@ app = FastAPI(title="Meetlify Event Management System",version='1.0.1')
 async def health():
     return {"status" : "Yes it's working" ,"DB" :settings.DATABASE_URL }
 
-app.include_router(router=event_router)
 app.include_router(router=registration_router)
+app.include_router(router=event_router)
 app.include_router(router=auth_router)
 
 
-# 
+
 app.add_exception_handler(AppException,app_exception_handler)
 
  

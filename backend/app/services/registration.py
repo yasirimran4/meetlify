@@ -3,6 +3,7 @@ from .event import EventService
 from exceptions.event import EventNotFoundError
 regitration_repo = RegitrationRepository()
 event_service = EventService()
+from models.registration import Registration
 
 class RegitrationService:
     async def register_event(self,event_id,payload,session):
@@ -11,8 +12,16 @@ class RegitrationService:
         if event is None:
             raise EventNotFoundError()
         
-        payload = payload.model_dump()
-        return await regitration_repo.register_event(event_id,payload,session)
+        registration = Registration(
+            name = payload.name,
+            email = payload.email,
+            current_role = payload.current_role,
+            organization = payload.organization,
+            semester = payload.semester,
+            event_id = event_id
+        ) 
+        
+        return await regitration_repo.register_event(registration,session)
 
     async def list_registrations(self,event_id,session):
         event = await event_service.get_single_event(session,event_id)

@@ -6,6 +6,7 @@ from services.event import EventService
 from models.user import User
 from schemas.event import CreateEventRequest
 from models.event import Status
+from pydantic import AnyUrl
 event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 
 event_service = EventService()
@@ -36,6 +37,10 @@ async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db))
 @event_router.put('/{event_id}/')
 async def update_event(event_id:int,payload : CreateEventRequest,session: AsyncSession = Depends(get_db)):
     return await event_service.update_event(session,event_id,payload)
+
+@event_router.put('/{event_id}/upload-video-url')
+async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db)):
+    return await event_service.upload_video_url(session,event_id,video_url)
 
 @event_router.patch('/{event_id}/status')
 async def change_status(event_id:int,status : Status = Query(default='PUBLISHED'),session: AsyncSession = Depends(get_db) ):

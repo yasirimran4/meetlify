@@ -68,6 +68,15 @@ class EventService:
 
         return {"status":status}
     
+    async def upload_video_url(self,session,event_id,video_url):
+
+        event = await event_repo.upload_video_url(session,event_id,video_url) 
+
+        if event is None:
+            raise EventNotFoundError()
+
+        return {"status":video_url}
+    
     async def delete_event(self,session,event_id):
         event = await event_repo.delete_event(session,event_id) 
 

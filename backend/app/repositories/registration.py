@@ -2,7 +2,7 @@ from models.registration import Registration
 from sqlalchemy import select 
 
 class RegitrationRepository:
-    async def register_event(self,event_id,payload,session):
+    async def register_event(self,payload,session):
         try:
             session.add(payload)
 
