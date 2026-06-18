@@ -6,6 +6,7 @@ from routes.auth import auth_router
 from core.exception_handler import app_exception_handler
 from exceptions.base import AppException
 from services.redis_service import redis_service
+from tasks.email_task import send_email
 app = FastAPI(title="Meetlify Event Management System",version='1.0.1')
 
 @app.get('/api/v1/health')
