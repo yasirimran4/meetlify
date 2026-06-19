@@ -16,6 +16,12 @@ class Setting(BaseSettings):
     CLOUDINARY_API_KEY: str     
     CLOUDINARY_API_SECRET: str 
     REDIS_URL : str 
+    SMTP_HOST : str 
+    SMTP_PORT : str 
+    SMTP_USERNAME : str 
+    SMTP_PASSWORD: str 
+    EMAIL_FROM : str 
+
     model_config = SettingsConfigDict(
         env_file = '.env',
         extra = 'ignore'

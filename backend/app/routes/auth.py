@@ -12,7 +12,7 @@ auth_service = AuthService()
 
 @auth_router.post("/login",response_model = UserLoginResponse)
 async def login(request:UserLogin,session:AsyncSession = Depends(get_db)):
-    send_email.delay(request.email)
+    send_email.delay(request.email,"Welcome","It's Working Perfectly")
     return await auth_service.login(request,session)
 
 
