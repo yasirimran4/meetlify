@@ -85,3 +85,4 @@ class EventService:
 
         return event
        
+event_service = EventService()       

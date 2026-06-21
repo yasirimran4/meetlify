@@ -33,4 +33,7 @@ class AuthRepository:
         except Exception as e:
             print("DB Error : ",str(e))   
 
+auth_repo = AuthRepository()
+
+
 

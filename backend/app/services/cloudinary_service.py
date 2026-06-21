@@ -15,3 +15,6 @@ class CloudinaryService:
     async def delete_image(self,public_id):
         result = cloudinary.uploader.destroy(public_id=public_id)
         return result
+
+
+cloudinary_service = CloudinaryService() 

@@ -22,3 +22,6 @@ class RegitrationRepository:
 
         except Exception as e:
             print("DB Error: ",str(e)) 
+
+
+regitration_repo = RegitrationRepository()

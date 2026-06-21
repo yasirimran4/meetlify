@@ -28,7 +28,7 @@ class EventRepository:
     async def get_past_events(self ,page,limit,search, session):
 
         try:
-            offset = (page -1)* limit
+            offset = (page - 1)* limit
             events = await session.execute(select(Event).where(Event.status.in_([Event.status == 'COMPLETED'])).offset(offset).limit(limit))
             return events.scalars().all()
 
@@ -91,3 +91,5 @@ class EventRepository:
 
         except Exception as e:
             print("DB Error: ",str(e))                             
+
+event_repo = EventRepository()  

@@ -5,5 +5,4 @@ celery_app = Celery("meetlify" ,broker=settings.REDIS_URL,backend=settings.REDIS
 
 celery_app.conf.imports = [
     "tasks.email_task",
-    "tasks.reminder_task"
 ]

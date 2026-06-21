@@ -2,14 +2,14 @@
 from fastapi import APIRouter , Depends , UploadFile , File , HTTPException , Query
 from core.dependency import get_db ,get_admin
 from sqlalchemy.ext.asyncio import AsyncSession
-from services.event import EventService
 from models.user import User
 from schemas.event import CreateEventRequest
 from models.event import Status
 from pydantic import AnyUrl
-event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 
-event_service = EventService()
+from services.event import event_service
+
+event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 
 @event_router.post('/')
 async def create_event(payload : CreateEventRequest,session: AsyncSession = Depends(get_db)):

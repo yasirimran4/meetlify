@@ -1,9 +1,7 @@
-from repositories.auth import AuthRepository
 from exceptions.auth import *
 from utils.password_util import verify_password
 from utils.jwt_util import *
-
-auth_repo = AuthRepository()
+from repositories.auth import auth_repo
 
 class AuthService:
     async def login(self,request,session):
@@ -22,3 +20,5 @@ class AuthService:
 
         
         return {"access_token" : access_token,"token_type":'bearer'}
+
+auth_service = AuthService()

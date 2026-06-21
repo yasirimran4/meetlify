@@ -43,10 +43,5 @@ class RedisService:
         self.send_mock_email(email=email,link=reset_link)
         self.confirm_reset_password(secure_token,"56789")
 
-        
-
-
-
-    
 
 redis_service=RedisService()         
