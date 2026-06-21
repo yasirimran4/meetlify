@@ -22,7 +22,7 @@ class RegitrationService:
 
         registration_response = await regitration_repo.register_event(registration,session)
 
-        send_registration_email.delay(email=payload.email,name=payload.name,event_title=event.title,meeting_link=event.meeting_link,speaker_name=event.speaker_name,event_date_time=event.event_date_time)
+        send_registration_email.delay(email=registration.email,name=registration.name,event_title=event.title,meeting_link=event.meeting_link,speaker_name=event.speaker_name,event_date_time=event.event_date_time)
 
         return registration_response
 
