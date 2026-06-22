@@ -35,4 +35,21 @@ services:
     depends_on:
       - redis
 
-    command: celery -A core.celery_app worker --loglevel=info
+    command: celery -A core.celery_app.celery_app worker --loglevel=info
+
+  beat:
+    build: .
+    container_name: meetlify_beat
+
+    volumes:
+      - ./app:/app
+
+    env_file:
+      - .env
+
+    depends_on:
+      - redis
+      - worker
+
+    command: celery -A core.celery_app.celery_app beat --loglevel=info
+

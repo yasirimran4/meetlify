@@ -33,5 +33,11 @@ class RegitrationService:
             raise EventNotFoundError()
         
         return await regitration_repo.list_registrations(event_id,session)
+    
+    async def pending_registrations_reminder(self,event_id,session):
+        return await regitration_repo.pending_registrations_reminder(event_id=event_id,session=session)
 
+    async def mark_reminder_sent(self,registration_id,session):
+        return await regitration_repo.mark_reminder_sent(registration_id,session=session)      
+                 
 registration_service = RegitrationService()

@@ -37,6 +37,9 @@ class EventService:
     async def get_upcoming_events(self,page,limit,search,session):
         return await event_repo.get_upcoming_events(page,limit,search,session)
     
+    async def get_events_requiring_reminder(self,session):
+        return await event_repo.get_events_requiring_reminder(session)
+    
     async def get_past_events(self,page,limit,search,session):
         return await event_repo.get_past_events(page,limit,search,session)
     

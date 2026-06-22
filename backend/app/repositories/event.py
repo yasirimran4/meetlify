@@ -25,6 +25,15 @@ class EventRepository:
         except Exception as e:
             print("DB Error: ",str(e)) 
 
+    async def get_events_requiring_reminder(self, session):
+
+        try:
+            events = await session.execute(select(Event).where(Event.status == 'PUBLISHED' , Event.event_date_time > datetime.now()))
+            return events.scalars().all()
+
+        except Exception as e:
+            print("DB Error: ",str(e))        
+
     async def get_past_events(self ,page,limit,search, session):
 
         try:

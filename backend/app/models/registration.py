@@ -1,5 +1,5 @@
 from core.database import Base
-from sqlalchemy import Column, Integer,String,ForeignKey ,DateTime , UniqueConstraint
+from sqlalchemy import Column, Integer,String,ForeignKey ,DateTime , UniqueConstraint,Boolean
 from sqlalchemy.sql import func
 from time import timezone
 from sqlalchemy.orm import relationship 
@@ -14,6 +14,7 @@ class Registration(Base):
     current_role = Column(String(100))
     organization = Column(String(100))
     semester = Column(String(100),nullable=True)
+    reminder_sent = Column(Boolean,default=False,nullable=False)
 
     created_at = Column(DateTime(timezone=True),server_default=func.now())
     # relationship
