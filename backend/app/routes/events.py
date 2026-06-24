@@ -14,18 +14,17 @@ event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 async def upload_thumbnail(thumbnail : UploadFile = File(...)):
     return await event_service.upload_thumbnail(thumbnail)
 
-@event_router.post('/')
+@event_router.post('/')     #  Protected Route
 async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
     return await event_service.create_event(request,session)
 
-
 @event_router.get('/upcoming')
-async def get_upcoming_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default="",max_length=100),session: AsyncSession = Depends(get_db)):
+async def get_upcoming_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default=None,max_length=100),session: AsyncSession = Depends(get_db)):
     return await event_service.get_upcoming_events(page,limit,search,session)
 
-@event_router.get('/past')
-async def get_past_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default="",max_length=100),session: AsyncSession = Depends(get_db)):
-    return await event_service.get_past_events(page,limit,search,session)
+@event_router.get('/completed')
+async def get_completed_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default="",max_length=100),session: AsyncSession = Depends(get_db)):
+    return await event_service.get_completed_events(page,limit,search,session)
 
 @event_router.get('/{event_id}/')
 async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db)):

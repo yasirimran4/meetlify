@@ -1,7 +1,12 @@
 from sqlalchemy import select , update ,delete
 from models.event import Event
 from datetime import datetime
+import logging
+
+logger  = logging.getLogger(__name__)
+
 class EventRepository:
+
     async def create_event(self,event,session):
         try:
             session.add(event)
@@ -13,17 +18,35 @@ class EventRepository:
             return event
 
         except Exception as e:
-            print("DB Error: ",str(e)) 
+            logger.exception("DB Error. Event not created.") 
 
     async def get_upcoming_events(self ,page,limit,search, session):
 
         try:
             offset = (page-1)* limit
-            events = await session.execute(select(Event).where(Event.status.in_([Event.status == 'PUBLISHED']) and Event.event_date_time > datetime.now()).offset(offset).limit(limit))
+            query = select(Event).where(Event.status == 'DRAFT',Event.event_date_time > datetime.now()).offset(offset).limit(limit)
+            if search:
+                query = query.where(Event.title.ilike(f"%{search}%"))
+
+            events = await session.execute(query)
             return events.scalars().all()
 
         except Exception as e:
-            print("DB Error: ",str(e)) 
+            logger.exception("DB Error. Event not returned..")  
+
+    async def get_completed_events(self ,page,limit,search, session):
+
+        try:
+            offset = (page-1)* limit
+            query = select(Event).where(Event.status == 'DRAFT',Event.event_date_time < datetime.now()).offset(offset).limit(limit)
+            if search:
+                query = query.where(Event.title.ilike(f"%{search}%"))
+
+            events = await session.execute(query)
+            return events.scalars().all()
+
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..")         
 
     async def get_events_requiring_reminder(self, session):
 
@@ -32,17 +55,7 @@ class EventRepository:
             return events.scalars().all()
 
         except Exception as e:
-            print("DB Error: ",str(e))        
-
-    async def get_past_events(self ,page,limit,search, session):
-
-        try:
-            offset = (page - 1)* limit
-            events = await session.execute(select(Event).where(Event.status.in_([Event.status == 'COMPLETED'])).offset(offset).limit(limit))
-            return events.scalars().all()
-
-        except Exception as e:
-            print("DB Error: ",str(e))         
+            print("DB Error: ",str(e))                
                 
     async def get_single_event(self , session,event_id):
 

@@ -22,7 +22,6 @@ class Event(Base):
     speaker_name = Column(String(100),nullable=False)
     meeting_link = Column(String(200),nullable=False)
     status =  Column(SQLEnum(Status),default=Status.DRAFT,nullable=False)
-    deadline = Column(DateTime(timezone=True),nullable=False)
     event_date_time = Column(DateTime(timezone=True),nullable=False)
     thumbnail_url = Column(String(500),nullable=True)
     thumbnail_public_id = Column(String(255),nullable=True)

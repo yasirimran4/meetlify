@@ -8,17 +8,19 @@ event_repo = EventRepository()   # object to interact with db
 cloud_service = CloudinaryService()
 
 class EventService:
-    async def create_event(self,payload, session ):
+    async def create_event(self,request, session ):
+
         event = Event(
-            title = payload.title,
-            description = payload.description,
-            speaker_name = payload.speaker_name,
-            meeting_link = str(payload.meeting_link),
-            deadline = payload.deadline,
-            event_date_time = payload.event_date_time,
-            thumbnail_public_id = payload.thumbnail_public_id,
-            thumbnail_url = str(payload.thumbnail_url)
+            title = request.title,
+            description = request.description,
+            speaker_name = request.speaker_name,
+            meeting_link = str(request.meeting_link),
+            deadline = request.deadline,
+            event_date_time = request.event_date_time,
+            thumbnail_public_id = request.thumbnail_public_id,
+            thumbnail_url = str(request.thumbnail_url)
             )
+        
         return await event_repo.create_event(event,session=session)
 
     async def upload_thumbnail(self,thumbnail):
@@ -35,13 +37,15 @@ class EventService:
         return await cloud_service.upload_image(thumbnail)   # Cloudinary service to upload thumbnail
 
     async def get_upcoming_events(self,page,limit,search,session):
-        return await event_repo.get_upcoming_events(page,limit,search,session)
+        events = await event_repo.get_upcoming_events(page,limit,search,session)
+        return events
+    
+    async def get_completed_events(self,page,limit,search,session):
+        events =  await event_repo.get_completed_events(page,limit,search,session)
+        return events
     
     async def get_events_requiring_reminder(self,session):
         return await event_repo.get_events_requiring_reminder(session)
-    
-    async def get_past_events(self,page,limit,search,session):
-        return await event_repo.get_past_events(page,limit,search,session)
     
     async def get_single_event(self,session,event_id):
         event = await event_repo.get_single_event(session,event_id) 

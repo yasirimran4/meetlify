@@ -7,7 +7,6 @@ class CreateEventRequest(BaseModel):
     description : Annotated[str,Field(...,min_length=100,max_length=2048,title="Event Description",description="Description of Event")] 
     speaker_name : Annotated[str,Field(...,min_length=5,max_length=100,title="Speaker Name",description="Speaker name")] 
     meeting_link : Annotated[AnyUrl,Field(...,title="Event Meet link",description="Meet link of Event")] 
-    deadline : Annotated[datetime,Field(...,title="Deadline for Registering Event")]
     event_date_time : Annotated[datetime,Field(...,title="Event Date and Time")] 
     thumbnail_public_id : Annotated[str,Field(...,title="Thumbnail of Public ID")]
     thumbnail_url : Annotated[AnyUrl,Field(...,title="Thumbnail URl")]
