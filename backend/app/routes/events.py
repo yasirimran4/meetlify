@@ -6,21 +6,18 @@ from models.user import User
 from schemas.event import CreateEventRequest
 from models.event import Status
 from pydantic import AnyUrl
-
 from services.event import event_service
 
 event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 
-@event_router.post('/')
-async def create_event(payload : CreateEventRequest,session: AsyncSession = Depends(get_db)):
-    try:
-        return await event_service.create_event(payload,session)
-    except HTTPException:
-        raise HTTPException(status_code=400,detail="Something went wrong")
-
 @event_router.post('/upload-thumbnail')
-async def upload_thumbnail(thumbnail : UploadFile = File(...),session: AsyncSession = Depends(get_db)):
-    return await event_service.upload_thumbnail(thumbnail,session)
+async def upload_thumbnail(thumbnail : UploadFile = File(...)):
+    return await event_service.upload_thumbnail(thumbnail)
+
+@event_router.post('/')
+async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
+    return await event_service.create_event(request,session)
+
 
 @event_router.get('/upcoming')
 async def get_upcoming_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default="",max_length=100),session: AsyncSession = Depends(get_db)):

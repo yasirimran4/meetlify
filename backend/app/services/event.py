@@ -21,18 +21,18 @@ class EventService:
             )
         return await event_repo.create_event(event,session=session)
 
-    async def upload_thumbnail(self,thumbnail ,session ):
+    async def upload_thumbnail(self,thumbnail):
 
         ALLOWED_TYPES = [
             "image/jpeg",
             "image/png",
             "image/webp"
         ]
-
+        
         if thumbnail.content_type not in ALLOWED_TYPES:  # Allowed types
             raise InvalidFomrat()
         
-        return await cloud_service.upload_image(thumbnail)
+        return await cloud_service.upload_image(thumbnail)   # Cloudinary service to upload thumbnail
 
     async def get_upcoming_events(self,page,limit,search,session):
         return await event_repo.get_upcoming_events(page,limit,search,session)
