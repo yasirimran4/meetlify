@@ -17,8 +17,10 @@ class AuthService:
             raise InvalidCredentialsError()
          
         access_token = create_access_token({'sub':str(user.id)})
+        refresh_token = create_refresh_token({'sub' : str(user.id)})
 
         
-        return {"access_token" : access_token,"token_type":'bearer'}
+        return {"access_token" : access_token,"refresh_token":refresh_token}
 
+    
 auth_service = AuthService()

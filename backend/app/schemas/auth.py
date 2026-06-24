@@ -7,4 +7,4 @@ class UserLogin(BaseModel):
 
 class UserLoginResponse(BaseModel):
     access_token : str
-    token_type :  str
+    refresh_token: str

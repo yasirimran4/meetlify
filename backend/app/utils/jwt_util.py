@@ -10,17 +10,27 @@ def create_access_token(data:dict):
 
     expire = datetime.now(timezone.utc) + timedelta(minutes=expire_time_minutes)
     
-    to_encode.update({"exp":expire})
+    to_encode.update({"exp":expire,"type" : "access"})
 
     jwt_encoded = jwt.encode(to_encode,settings.SECRET_KEY,settings.ALGORITHM)
 
     return jwt_encoded
 
+def create_refresh_token(data:dict):
 
-def verify_access_token(token:str):
+    to_encode = data.copy()
+
+    expire = datetime.now(timezone.utc) + timedelta(days=7)
+
+    to_encode.update({"exp" : expire, "type" : "refresh"})
+
+    jwt_encode = jwt.encode(to_encode,settings.SECRET_KEY,settings.ALGORITHM)
+
+    return jwt_encode
+
+def decode_token(token:str):
 
     try:
-        print("Token = ",token)
         payload = jwt.decode(token,settings.SECRET_KEY,settings.ALGORITHM)
         return payload
     except JWTError:

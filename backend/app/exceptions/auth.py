@@ -10,15 +10,6 @@ class InvalidCredentialsError(AppException):
         message: str = "Invalid email or password"
     ):
         super().__init__(message)
-
-
-class UserAlreadyExist(AppException):
-
-    def __init__(
-        self,
-        message: str = "User already exists"
-    ):
-        super().__init__(message)
  
 class UserNotFoundError(AppException):
 
