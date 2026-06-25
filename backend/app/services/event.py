@@ -149,24 +149,6 @@ class EventService:
 
         return event
     
-    async def change_status(self,session,event_id,status):
-
-        event = await event_repo.change_status(session,event_id,status) 
-
-        if event is None:
-            raise EventNotFoundError()
-
-        return {"status":status}
-    
-    async def upload_video_url(self,session,event_id,video_url):
-
-        event = await event_repo.upload_video_url(session,event_id,video_url) 
-
-        if event is None:
-            raise EventNotFoundError()
-
-        return {"status":video_url}
-    
     async def delete_event(self,session,event_id):
         event = await event_repo.get_single_event(session,event_id) 
 
@@ -181,7 +163,26 @@ class EventService:
 
         return event
        
+    async def upload_video_url(self,session,event_id,video_url):
+
+        event = await event_repo.get_single_event(session,event_id) 
+
+        if event is None:
+            raise EventNotFoundError()
+
+        event = await event_repo.upload_video_url(session,event_id,str(video_url)) 
+
+        return event
        
+    async def publish_event(self,session,event_id):
+
+        event = await event_repo.publish_event(session,event_id) 
+
+        if event is None:
+            raise EventNotFoundError()
+        
+        return event
+   
     async def get_events_requiring_reminder(self,session):
         return await event_repo.get_events_requiring_reminder(session)
        

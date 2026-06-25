@@ -34,15 +34,16 @@ async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db))
 async def update_event(event_id:int,request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
     return await event_service.update_event(session,event_id,request)
 
+@event_router.delete('/{event_id}/')    #  Protected Route
+async def delete_event(event_id:int,session: AsyncSession = Depends(get_db)):
+    return await event_service.delete_event(session,event_id)
+
 @event_router.patch('/{event_id}/upload-video-url')  #  Protected Route
 async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db)):
     return await event_service.upload_video_url(session,event_id,video_url)
 
-@event_router.patch('/{event_id}/status')  #  Protected Route
-async def change_status(event_id:int,status : Status = Query(default='PUBLISHED'),session: AsyncSession = Depends(get_db) ):
-    return await event_service.change_status(session,event_id,status)
+@event_router.patch('/{event_id}/publish')  #  Protected Route
+async def publish_event(event_id:int,session: AsyncSession = Depends(get_db) ):
+    return await event_service.publish_event(session,event_id)
 
-@event_router.delete('/{event_id}/')    #  Protected Route
-async def delete_event(event_id:int,session: AsyncSession = Depends(get_db)):
-    return await event_service.delete_event(session,event_id)
 

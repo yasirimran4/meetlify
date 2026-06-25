@@ -24,7 +24,7 @@ class EventRepository:
 
         try:
             offset = (page-1)* limit
-            query = select(Event).where(Event.status == 'DRAFT',Event.event_date_time > datetime.now()).offset(offset).limit(limit)
+            query = select(Event).where(Event.status == 'PUBLISHED',Event.event_date_time > datetime.now()).offset(offset).limit(limit)
             if search:
                 query = query.where(Event.title.ilike(f"%{search}%"))
 
@@ -38,7 +38,7 @@ class EventRepository:
 
         try:
             offset = (page-1)* limit
-            query = select(Event).where(Event.status == 'DRAFT',Event.event_date_time < datetime.now()).offset(offset).limit(limit)
+            query = select(Event).where(Event.status == 'PUBLISHED',Event.event_date_time < datetime.now()).offset(offset).limit(limit)
             if search:
                 query = query.where(Event.title.ilike(f"%{search}%"))
 
@@ -51,21 +51,11 @@ class EventRepository:
     async def get_single_event(self, session,event_id):
 
         try:
-            event = await session.execute(select(Event).where(Event.id == event_id))
+            event = await session.execute(select(Event).where(Event.status == 'PUBLISHED',Event.id == event_id))
             return event.scalar_one_or_none()
 
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
-
-    async def get_events_requiring_reminder(self, session):
-
-        try:
-            events = await session.execute(select(Event).where(Event.status == 'PUBLISHED' , Event.event_date_time > datetime.now()))
-            return events.scalars().all()
-
-        except Exception as e:
-            print("DB Error: ",str(e))                
-                
 
     async def update_event(self,session,event_id,payload):
 
@@ -77,31 +67,8 @@ class EventRepository:
             return event.scalar_one_or_none()
 
         except Exception as e:
-            print("DB Error: ",str(e)) 
-
-    async def change_status(self,session,event_id,status):
-
-        try:
-
-            event = await session.execute(update(Event).where(Event.id == event_id).values(status = status).returning(Event))
-            await session.commit()
-
-            return event.scalar_one_or_none()
-
-        except Exception as e:
-            print("DB Error: ",str(e)) 
-             
-    async def upload_video_url(self,session,event_id,video_url):
-
-        try:
-
-            event = await session.execute(update(Event).where(Event.id == event_id).values(video_url = video_url).returning(Event))
-            await session.commit()
-
-            return event.scalar_one_or_none()
-
-        except Exception as e:
-            print("DB Error: ",str(e))
+            logger.exception("DB Error. Event not returned..") 
+ 
 
     async def delete_event(self,session,event_id):
 
@@ -113,6 +80,45 @@ class EventRepository:
             return event.scalar_one_or_none()
 
         except Exception as e:
-            print("DB Error: ",str(e))                             
+            logger.exception("DB Error. Event not returned..") 
+
+             
+    async def upload_video_url(self,session,event_id,video_url):
+
+        try:
+
+            event = await session.execute(update(Event).where(Event.id == event_id).values(video_url = video_url).returning(Event))
+            await session.commit()
+
+            return event.scalar_one_or_none()
+
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..") 
+
+    async def publish_event(self,session,event_id):
+
+        try:
+
+            event = await session.execute(update(Event).where(Event.id == event_id).values(status = "PUBLISHED").returning(Event))
+            await session.commit()
+
+            return event.scalar_one_or_none()
+
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..") 
+
+
+    async def get_events_requiring_reminder(self, session):
+
+        try:
+            events = await session.execute(select(Event).where(Event.status == 'PUBLISHED' , Event.event_date_time > datetime.now()))
+            return events.scalars().all()
+
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..") 
+                
+                        
+
+                            
 
 event_repo = EventRepository()  

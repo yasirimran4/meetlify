@@ -6,9 +6,9 @@ import asyncio
     bind=True,
     max_retries=3
 )
+
 def check_upcoming_events(self):
     try:
-        print("Yasir")
         asyncio.run(
             reminder_service.send_reminder_emails()
         )
