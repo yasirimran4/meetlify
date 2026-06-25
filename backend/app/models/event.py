@@ -31,4 +31,4 @@ class Event(Base):
     updated_at = Column(DateTime(timezone=True),server_default=func.now(),onupdate=func.now())
 
     # relationship
-    registrations = relationship("Registration",back_populates="event",cascade="all, delete-orphan")
+    registrations = relationship("Registration",back_populates="event",cascade="all, delete-orphan",passive_deletes=True)

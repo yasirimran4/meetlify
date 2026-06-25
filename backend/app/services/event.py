@@ -129,18 +129,23 @@ class EventService:
         redis_client.set(event_detail_key,json.dumps(result),ex=3600)
 
         return event
-    
-    async def get_events_requiring_reminder(self,session):
-        return await event_repo.get_events_requiring_reminder(session)
-    
-    async def update_event(self,session,event_id,payload):
-        update_data = payload.model_dump()
-        update_data["thumbnail_url"] = str(update_data["thumbnail_url"])
-        update_data["meeting_link"] = str(update_data["meeting_link"])
-        event = await event_repo.update_event(session,event_id,update_data) 
+ 
+    async def update_event(self,session,event_id,request):
+
+        event = await event_repo.get_single_event(session,event_id) 
 
         if event is None:
             raise EventNotFoundError()
+
+        update_data = request.model_dump()
+        update_data["thumbnail_url"] = str(update_data["thumbnail_url"])
+        update_data["meeting_link"] = str(update_data["meeting_link"])
+
+        event = await event_repo.update_event(session,event_id,update_data) 
+        
+        redis_client.delete("events:upcoming")
+        redis_client.delete("events:completed")
+        redis_client.delete(f"event:{event_id}")
 
         return event
     
@@ -163,11 +168,21 @@ class EventService:
         return {"status":video_url}
     
     async def delete_event(self,session,event_id):
-        event = await event_repo.delete_event(session,event_id) 
+        event = await event_repo.get_single_event(session,event_id) 
 
         if event is None:
             raise EventNotFoundError()
 
+        event = await event_repo.delete_event(session,event_id) 
+ 
+        redis_client.delete("events:upcoming")
+        redis_client.delete("events:completed")
+        redis_client.delete(f"event:{event_id}")
+
         return event
+       
+       
+    async def get_events_requiring_reminder(self,session):
+        return await event_repo.get_events_requiring_reminder(session)
        
 event_service = EventService()       

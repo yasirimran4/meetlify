@@ -18,7 +18,7 @@ async def upload_thumbnail(thumbnail : UploadFile = File(...)):
 async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
     return await event_service.create_event(request,session)
 
-@event_router.get('/upcoming')
+@event_router.get('/upcoming')   
 async def get_upcoming_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default=None,max_length=100),session: AsyncSession = Depends(get_db)):
     return await event_service.get_upcoming_events(page,limit,search,session)
 
@@ -30,19 +30,19 @@ async def get_completed_events(page : int = Query(default=1, ge=1),limit : int =
 async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db)):
     return await event_service.get_single_event(session,event_id)
 
-@event_router.put('/{event_id}/')
+@event_router.put('/{event_id}/')  #  Protected Route
 async def update_event(event_id:int,request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
     return await event_service.update_event(session,event_id,request)
 
-@event_router.put('/{event_id}/upload-video-url')
+@event_router.patch('/{event_id}/upload-video-url')  #  Protected Route
 async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db)):
     return await event_service.upload_video_url(session,event_id,video_url)
 
-@event_router.patch('/{event_id}/status')
+@event_router.patch('/{event_id}/status')  #  Protected Route
 async def change_status(event_id:int,status : Status = Query(default='PUBLISHED'),session: AsyncSession = Depends(get_db) ):
     return await event_service.change_status(session,event_id,status)
 
-@event_router.delete('/{event_id}/')
+@event_router.delete('/{event_id}/')    #  Protected Route
 async def delete_event(event_id:int,session: AsyncSession = Depends(get_db)):
     return await event_service.delete_event(session,event_id)
 
