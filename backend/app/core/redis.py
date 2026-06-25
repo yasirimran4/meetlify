@@ -1,8 +1,8 @@
-from redis import Redis
+import redis
 
-redis_client = Redis(
+redis_client = redis.Redis(
     host="redis",
-    port = 6379,
+    port=6379,
     decode_responses=True
 )
 

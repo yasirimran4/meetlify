@@ -10,3 +10,17 @@ class CreateEventRequest(BaseModel):
     event_date_time : Annotated[datetime,Field(...,title="Event Date and Time")] 
     thumbnail_public_id : Annotated[str,Field(...,title="Thumbnail of Public ID")]
     thumbnail_url : Annotated[AnyUrl,Field(...,title="Thumbnail URl")]
+
+class EventResponse(BaseModel):
+    title: str
+    description: str
+    speaker_name: str
+    meeting_link: AnyUrl
+    event_date_time: datetime
+    thumbnail_public_id: str
+    thumbnail_url: AnyUrl
+
+    model_config = {
+        "from_attributes": True
+    }
+    

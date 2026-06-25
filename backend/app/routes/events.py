@@ -31,8 +31,8 @@ async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db))
     return await event_service.get_single_event(session,event_id)
 
 @event_router.put('/{event_id}/')
-async def update_event(event_id:int,payload : CreateEventRequest,session: AsyncSession = Depends(get_db)):
-    return await event_service.update_event(session,event_id,payload)
+async def update_event(event_id:int,request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
+    return await event_service.update_event(session,event_id,request)
 
 @event_router.put('/{event_id}/upload-video-url')
 async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db)):

@@ -48,6 +48,15 @@ class EventRepository:
         except Exception as e:
             logger.exception("DB Error. Event not returned..")         
 
+    async def get_single_event(self, session,event_id):
+
+        try:
+            event = await session.execute(select(Event).where(Event.id == event_id))
+            return event.scalar_one_or_none()
+
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..") 
+
     async def get_events_requiring_reminder(self, session):
 
         try:
@@ -57,14 +66,6 @@ class EventRepository:
         except Exception as e:
             print("DB Error: ",str(e))                
                 
-    async def get_single_event(self , session,event_id):
-
-        try:
-            event = await session.execute(select(Event).where(Event.id == event_id))
-            return event.scalar_one_or_none()
-
-        except Exception as e:
-            print("DB Error: ",str(e))  
 
     async def update_event(self,session,event_id,payload):
 

@@ -1,11 +1,10 @@
-from repositories.event import EventRepository
 from exceptions.event import InvalidFomrat , EventNotFoundError
-from services.cloudinary_service import CloudinaryService
 from models.event import Event 
-from models.registration import Registration
-
-event_repo = EventRepository()   # object to interact with db
-cloud_service = CloudinaryService()
+from repositories.event import event_repo
+from services.cloudinary_service import cloudinary_service
+from core.redis import redis_client
+import json
+from schemas.event import EventResponse
 
 class EventService:
     async def create_event(self,request, session ):
@@ -34,26 +33,105 @@ class EventService:
         if thumbnail.content_type not in ALLOWED_TYPES:  # Allowed types
             raise InvalidFomrat()
         
-        return await cloud_service.upload_image(thumbnail)   # Cloudinary service to upload thumbnail
+        return await cloudinary_service.upload_image(thumbnail)   # Cloudinary service to upload thumbnail
 
     async def get_upcoming_events(self,page,limit,search,session):
+
+        cached = redis_client.get("events:upcoming")
+
+        if cached:
+            print("Cashed Call")
+            return json.loads(cached)
+        
         events = await event_repo.get_upcoming_events(page,limit,search,session)
+        result = [
+            {
+                "id" : event.id,
+                "title": event.title,
+                "description": event.description,
+                "speaker_name": event.speaker_name,
+                "meeting_link": str(event.meeting_link),
+                "event_date_time": str(event.event_date_time),
+                "status": event.status,
+                "created_at": str(event.created_at),
+                "updated_at": str(event.updated_at),
+                "thumbnail_public_id": event.thumbnail_public_id,
+                "thumbnail_url": str(event.thumbnail_url),
+                "video_url" : event.video_url
+            }
+            for event in events
+        ]
+
+        redis_client.set("events:upcoming",json.dumps(result),ex=3600)
+
         return events
     
     async def get_completed_events(self,page,limit,search,session):
-        events =  await event_repo.get_completed_events(page,limit,search,session)
+
+        cached = redis_client.get("events:completed")
+
+        if cached:
+            print("Cashed Call")
+            return json.loads(cached)
+        
+        events = await event_repo.get_completed_events(page,limit,search,session)
+        result = [
+            {
+                "id" : event.id,
+                "title": event.title,
+                "description": event.description,
+                "speaker_name": event.speaker_name,
+                "meeting_link": str(event.meeting_link),
+                "event_date_time": str(event.event_date_time),
+                "status": event.status,
+                "created_at": str(event.created_at),
+                "updated_at": str(event.updated_at),
+                "thumbnail_public_id": event.thumbnail_public_id,
+                "thumbnail_url": str(event.thumbnail_url),
+                "video_url" : event.video_url
+            }
+            for event in events
+        ]
+
+        redis_client.set("events:completed",json.dumps(result),ex=3600)
+
         return events
     
-    async def get_events_requiring_reminder(self,session):
-        return await event_repo.get_events_requiring_reminder(session)
-    
     async def get_single_event(self,session,event_id):
+
+        event_detail_key = f"event:{event_id}"
+        cached = redis_client.get(event_detail_key)
+
+        if cached:
+            print("Cashed Call")
+            return json.loads(cached)
+
         event = await event_repo.get_single_event(session,event_id) 
 
         if event is None:
             raise EventNotFoundError()
+        
+        result = {
+                "id" : event.id,
+                "title": event.title,
+                "description": event.description,
+                "speaker_name": event.speaker_name,
+                "meeting_link": str(event.meeting_link),
+                "event_date_time": str(event.event_date_time),
+                "status": event.status,
+                "created_at": str(event.created_at),
+                "updated_at": str(event.updated_at),
+                "thumbnail_public_id": event.thumbnail_public_id,
+                "thumbnail_url": str(event.thumbnail_url),
+                "video_url" : event.video_url
+            }
+        
+        redis_client.set(event_detail_key,json.dumps(result),ex=3600)
 
         return event
+    
+    async def get_events_requiring_reminder(self,session):
+        return await event_repo.get_events_requiring_reminder(session)
     
     async def update_event(self,session,event_id,payload):
         update_data = payload.model_dump()

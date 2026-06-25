@@ -2,10 +2,21 @@ from exceptions.auth import *
 from utils.password_util import verify_password
 from utils.jwt_util import *
 from repositories.auth import auth_repo
-
+from core.redis import redis_client
+from fastapi import HTTPException
 class AuthService:
     async def login(self,request,session):
 
+
+        rate_limit_key = f"rate_limit:login:{request.email}"
+        count = redis_client.incr(rate_limit_key)
+
+        if count == 1:
+            redis_client.expire(rate_limit_key,1800)
+
+        if count > 5:
+            raise HTTPException(status_code=429,detail="Too many request. Try Again Later")    
+        
         user = await auth_repo.find_user_by_email(request.email,session=session)
 
         if not user:
