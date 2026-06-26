@@ -175,13 +175,7 @@ class EventService:
         return event
        
     async def publish_event(self,session,event_id):
-
-        event = await event_repo.publish_event(session,event_id) 
-
-        if event is None:
-            raise EventNotFoundError()
-        
-        return event
+        return await event_repo.publish_event(session,event_id) 
    
     async def get_events_requiring_reminder(self,session):
         return await event_repo.get_events_requiring_reminder(session)

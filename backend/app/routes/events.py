@@ -10,12 +10,12 @@ from services.event import event_service
 
 event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 
-@event_router.post('/upload-thumbnail')
-async def upload_thumbnail(thumbnail : UploadFile = File(...)):
+@event_router.post('/upload-thumbnail')  #  Protected Route
+async def upload_thumbnail(thumbnail : UploadFile = File(...),admin:User = Depends(get_admin)):
     return await event_service.upload_thumbnail(thumbnail)
 
 @event_router.post('/')     #  Protected Route
-async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
+async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     return await event_service.create_event(request,session)
 
 @event_router.get('/upcoming')   
@@ -31,19 +31,19 @@ async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db))
     return await event_service.get_single_event(session,event_id)
 
 @event_router.put('/{event_id}/')  #  Protected Route
-async def update_event(event_id:int,request : CreateEventRequest,session: AsyncSession = Depends(get_db)):
+async def update_event(event_id:int,request : CreateEventRequest,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     return await event_service.update_event(session,event_id,request)
 
 @event_router.delete('/{event_id}/')    #  Protected Route
-async def delete_event(event_id:int,session: AsyncSession = Depends(get_db)):
+async def delete_event(event_id:int,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     return await event_service.delete_event(session,event_id)
 
 @event_router.patch('/{event_id}/upload-video-url')  #  Protected Route
-async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db)):
+async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     return await event_service.upload_video_url(session,event_id,video_url)
 
 @event_router.patch('/{event_id}/publish')  #  Protected Route
-async def publish_event(event_id:int,session: AsyncSession = Depends(get_db) ):
+async def publish_event(event_id:int,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     return await event_service.publish_event(session,event_id)
 
 

@@ -6,6 +6,7 @@ from services.event import event_service
 from core.redis import redis_client
 from fastapi import HTTPException
 
+
 class RegitrationService:
     async def register_event(self,event_id,request,session):   # Rate limit
 
