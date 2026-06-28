@@ -25,7 +25,3 @@ async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db))
 async def register_event(event_id :int , request : CreateRegistration,session: AsyncSession = Depends(get_db)):
     return await registration_service.register_event(event_id,request,session)
 
-@event_router.get('/{event_id}/analytics')   
-async def event_analytics(event_id :int ,session: AsyncSession = Depends(get_db)):
-    return await registration_service.event_analytics(event_id,session)
-

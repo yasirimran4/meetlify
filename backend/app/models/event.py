@@ -9,7 +9,6 @@ from enum import Enum
 class Status(str,Enum):
     DRAFT = "draft"
     PUBLISHED = "published"
-    CANCELLED = "cancelled"
     COMPLETED = "completed"
 
 class Event(Base):

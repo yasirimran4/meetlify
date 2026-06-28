@@ -1,6 +1,7 @@
 from pydantic import BaseModel , Field ,AnyUrl , field_validator
 from typing import Annotated  
 from datetime import datetime ,timezone
+from models.event import Status
 
 class CreateEventRequest(BaseModel):
     title : Annotated[str,Field(...,min_length=5,max_length=500,title="Event Name",description="Title of Event")] 
@@ -33,6 +34,8 @@ class EventResponse(BaseModel):
 
 class EventAnalytics(BaseModel):
     registrations:int
-    reminders_sent:int
-    status:str
+    status: Status
 
+    model_config = {
+        "from_attributes": True
+    }

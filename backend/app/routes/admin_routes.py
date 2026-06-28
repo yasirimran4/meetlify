@@ -45,3 +45,7 @@ async def list_registrations(event_id : int,session: AsyncSession = Depends(get_
 async def dashboard(session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     return await registration_service.dashboard(session)
 
+@admin_router.get('/{event_id}/analytics',response_model=EventAnalytics)   
+async def event_analytics(event_id :int ,session: AsyncSession = Depends(get_db)):
+    return await event_service.event_analytics(event_id,session)
+

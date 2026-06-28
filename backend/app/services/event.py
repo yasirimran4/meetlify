@@ -4,6 +4,7 @@ from repositories.event import event_repo
 from services.cloudinary_service import cloudinary_service
 from core.redis import redis_client
 from schemas.registration import RegistrationResponse
+from schemas.event import *
 import json
 from core.redis import redis_client
 import math
@@ -198,23 +199,21 @@ class EventService:
     async def get_events_requiring_reminder(self,session):
         return await event_repo.get_events_requiring_reminder(session)
     
-    async def event_analytics (self,event_id,session):
-        event = await event_service.get_single_event(session,event_id)
+    async def event_analytics(self,event_id,session):
 
-        all_registrations = await event_repo.get_all_registrations_by_event_id(event_id,session)
+        event = await event_repo.get_single_event(session,event_id)
 
         if event is None:
             raise EventNotFoundError()
 
-        registrations = await event_repo.list_registrations(event_id,page,limit,session)
+        registrations = await event_repo.get_all_registrations_by_event_id(event_id,session)
         
-        response = [
-            RegistrationResponse.model_validate(registration)
-            for registration in registrations
-            ]
+        registration_count = len(registrations) if len(registrations) > 0 else 0
         
-        return {"items" : response,"pagination" : {"page" : page, "limit" : limit,"total_items" : len(all_registrations),"total_pages" : math.ceil((len(all_registrations)/limit)),"has_next" : bool((len(all_registrations) - page*limit) >= 1),"has_previous" : bool(page > 1)}}  
-   
+        return EventAnalytics(
+                registrations=registration_count,
+                status=event.status
+            )
        
 event_service = EventService()       
 

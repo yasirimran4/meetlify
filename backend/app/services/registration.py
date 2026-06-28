@@ -59,12 +59,11 @@ class RegitrationService:
         upcoming_events = await event_repo.upcoming_events_count(session=session)
         completed_events = await event_repo.completed_events_count(session=session)
 
-        return {"total_events" :upcoming_events+ completed_events, "upcoming_events" : upcoming_events,"completed_events": completed_events,"total_registrations":total_registrations}
+        return {"total_events" : upcoming_events + completed_events, "upcoming_events" : upcoming_events,"completed_events": completed_events,"total_registrations":total_registrations}
 
     
     async def pending_registrations_reminder(self,event_id,session):
         return await regitration_repo.pending_registrations_reminder(event_id=event_id,session=session)
-
 
     async def mark_reminder_sent(self,registration_id,session):
         return await regitration_repo.mark_reminder_sent(registration_id,session=session)      
