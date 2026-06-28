@@ -1,5 +1,5 @@
 from models.registration import Registration
-from sqlalchemy import select ,update
+from sqlalchemy import select ,update ,func
 
 class RegitrationRepository:
     async def register_event(self,payload,session):
@@ -15,13 +15,15 @@ class RegitrationRepository:
         except Exception as e:
             print("DB Error: ",str(e)) 
 
-    async def list_registrations(self,event_id,session):
+    
+
+    async def get_registration_by_email(self,event_id,email,session):
         try:
-            registrations = await session.execute(select(Registration).where(Registration.event_id == event_id))
-            return registrations.scalars().all()
+            registration = await session.execute(select(Registration).where(Registration.event_id == event_id,Registration.email == email))
+            return registration.scalar_one_or_none()
 
         except Exception as e:
-            print("DB Error: ",str(e))
+            print("DB Error: ",str(e))        
 
     async def pending_registrations_reminder(self,event_id,session):
         try:
@@ -29,7 +31,15 @@ class RegitrationRepository:
             return registrations.scalars().all()
 
         except Exception as e:
-            print("DB Error: ",str(e))
+            print("DB Error: ",str(e)) 
+
+    async def get_registrations_count(self,session):
+        try:
+            registrations = await session.execute(select(func.count()).select_from(Registration))
+            return registrations.scalar()
+
+        except Exception as e:
+            print("DB Error: ",str(e))             
 
     async def mark_reminder_sent(self,registration_id,session):
         try:

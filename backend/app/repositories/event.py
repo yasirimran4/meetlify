@@ -1,7 +1,8 @@
-from sqlalchemy import select , update ,delete
+from sqlalchemy import select , update ,delete , func
 from models.event import Event
 from datetime import datetime
 import logging
+from models.registration import Registration
 
 logger  = logging.getLogger(__name__)
 
@@ -107,6 +108,39 @@ class EventRepository:
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
 
+    async def get_all_registrations_by_event_id(self,event_id,session):
+        try:
+            registrations = await session.execute(select(Registration).where(Registration.event_id == event_id))
+            return registrations.scalars().all()
+
+        except Exception as e:
+            print("DB Error: ",str(e))
+
+
+    async def list_registrations(self,event_id,page,limit,session):
+        try:
+            offset = (page-1)* limit
+            registrations = await session.execute(select(Registration).where(Registration.event_id == event_id).offset(offset).limit(limit))
+            return registrations.scalars().all()
+
+        except Exception as e:
+            print("DB Error: ",str(e))
+
+    async def upcoming_events_count(self,session):
+        try:
+            events = await session.execute(select(func.count()).where(Event.status == 'PUBLISHED',Event.event_date_time > datetime.now()).select_from(Event))
+            return events.scalar()
+
+        except Exception as e:
+            print("DB Error: ",str(e)) 
+
+    async def completed_events_count(self,session):
+        try:
+            events = await session.execute(select(func.count()).where(Event.status == 'PUBLISHED',Event.event_date_time < datetime.now()).select_from(Event))
+            return events.scalar()
+
+        except Exception as e:
+            print("DB Error: ",str(e))                  
 
     async def get_events_requiring_reminder(self, session):
 

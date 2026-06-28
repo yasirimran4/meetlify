@@ -3,15 +3,6 @@
 from exceptions.base import AppException
 
 
-class EventFullError(AppException):
-
-    def __init__(
-        self,
-        message="No seats available"
-    ):
-        super().__init__(message)
-
-
 class DuplicateRegistrationError(AppException):
 
     def __init__(
@@ -19,3 +10,4 @@ class DuplicateRegistrationError(AppException):
         message="User already registered"
     ):
         super().__init__(message)
+

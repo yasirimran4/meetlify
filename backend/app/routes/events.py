@@ -1,22 +1,13 @@
 
-from fastapi import APIRouter , Depends , UploadFile , File , HTTPException , Query
+from fastapi import APIRouter , Depends , Query
 from core.dependency import get_db ,get_admin
 from sqlalchemy.ext.asyncio import AsyncSession
 from models.user import User
-from schemas.event import CreateEventRequest
-from models.event import Status
-from pydantic import AnyUrl
 from services.event import event_service
-
+from schemas.registration import *
+from services.registration import registration_service
 event_router = APIRouter(prefix='/api/v1/events' ,tags=["Events"])
 
-@event_router.post('/upload-thumbnail')  #  Protected Route
-async def upload_thumbnail(thumbnail : UploadFile = File(...),admin:User = Depends(get_admin)):
-    return await event_service.upload_thumbnail(thumbnail)
-
-@event_router.post('/')     #  Protected Route
-async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
-    return await event_service.create_event(request,session)
 
 @event_router.get('/upcoming')   
 async def get_upcoming_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default=None,max_length=100),session: AsyncSession = Depends(get_db)):
@@ -26,24 +17,15 @@ async def get_upcoming_events(page : int = Query(default=1, ge=1),limit : int = 
 async def get_completed_events(page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),search : str = Query(default="",max_length=100),session: AsyncSession = Depends(get_db)):
     return await event_service.get_completed_events(page,limit,search,session)
 
-@event_router.get('/{event_id}/')
+@event_router.get('/{event_id}')
 async def get_single_event(event_id:int,session: AsyncSession = Depends(get_db)):
     return await event_service.get_single_event(session,event_id)
 
-@event_router.put('/{event_id}/')  #  Protected Route
-async def update_event(event_id:int,request : CreateEventRequest,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
-    return await event_service.update_event(session,event_id,request)
+@event_router.post('/{event_id}/register')   
+async def register_event(event_id :int , request : CreateRegistration,session: AsyncSession = Depends(get_db)):
+    return await registration_service.register_event(event_id,request,session)
 
-@event_router.delete('/{event_id}/')    #  Protected Route
-async def delete_event(event_id:int,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
-    return await event_service.delete_event(session,event_id)
-
-@event_router.patch('/{event_id}/upload-video-url')  #  Protected Route
-async def upload_video_url(event_id:int,video_url : AnyUrl,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
-    return await event_service.upload_video_url(session,event_id,video_url)
-
-@event_router.patch('/{event_id}/publish')  #  Protected Route
-async def publish_event(event_id:int,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
-    return await event_service.publish_event(session,event_id)
-
+@event_router.get('/{event_id}/analytics')   
+async def event_analytics(event_id :int ,session: AsyncSession = Depends(get_db)):
+    return await registration_service.event_analytics(event_id,session)
 

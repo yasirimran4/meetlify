@@ -20,12 +20,6 @@ class EventAlreadyPublishedError(AppException):
     ):
         super().__init__(message,status_code=400)
 
-
-class RegistrationDeadlinePassedError(AppException):
-
-    def __init__(self):
-        super().__init__(message="Registration deadline has passed",status_code=400)        
-
 class InvalidFomrat(AppException):
 
     def __init__(self):

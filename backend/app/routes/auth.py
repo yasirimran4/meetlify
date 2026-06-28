@@ -15,6 +15,11 @@ async def login(request:UserLogin,session:AsyncSession = Depends(get_db)):
 @auth_router.post("/refresh")
 async def refresh_token(token:str):
     payload = decode_token(token=token)
+    
+    if payload is None:
+        raise HTTPException( status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials") 
+    
     if payload.get("type") != "refresh":
         raise HTTPException( status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Could not validate credentials") 
