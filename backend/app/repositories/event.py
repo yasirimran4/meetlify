@@ -2,6 +2,7 @@ from sqlalchemy import select , update ,delete , func
 from models.event import Event
 from datetime import datetime
 import logging
+from models.event import Status
 from models.registration import Registration
 
 logger  = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ class EventRepository:
 
         try:
             offset = (page-1)* limit
-            query = select(Event).where(Event.status == 'PUBLISHED',Event.event_date_time > datetime.now()).offset(offset).limit(limit)
+            query = select(Event).where(Event.status == Status.PUBLISHED,Event.event_date_time > datetime.now()).offset(offset).limit(limit)
             if search:
                 query = query.where(Event.title.ilike(f"%{search}%"))
 
@@ -39,7 +40,7 @@ class EventRepository:
 
         try:
             offset = (page-1)* limit
-            query = select(Event).where(Event.status == 'PUBLISHED',Event.event_date_time < datetime.now()).offset(offset).limit(limit)
+            query = select(Event).where(Event.status == Status.COMPLETED,Event.event_date_time < datetime.now()).offset(offset).limit(limit)
             if search:
                 query = query.where(Event.title.ilike(f"%{search}%"))
 
@@ -47,7 +48,17 @@ class EventRepository:
             return events.scalars().all()
 
         except Exception as e:
-            logger.exception("DB Error. Event not returned..")         
+            logger.exception("DB Error. Event not returned..") 
+
+    async def get_completed_events_for_changing_status(self , session):
+
+        try:
+            query = select(Event).where(Event.status == Status.PUBLISHED,Event.event_date_time < datetime.now())
+            events = await session.execute(query)
+            return events.scalars().all()
+
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..")                        
 
     async def get_single_event(self, session,event_id):
 
@@ -151,8 +162,13 @@ class EventRepository:
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
                 
-                        
+    async def mark_completed(self,event_id,session):
+        try:
+            await session.execute(update(Event).where(Event.id == event_id).values(status=Status.COMPLETED))
+            await session.commit()
+
+        except Exception as e:
+            print("DB Error: ",str(e))                       
 
                             
-
 event_repo = EventRepository()  
