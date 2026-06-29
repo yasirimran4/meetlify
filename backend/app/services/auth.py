@@ -9,10 +9,10 @@ class AuthService:
 
 
         rate_limit_key = f"rate_limit:login:{request.email}"
-        count = redis_client.incr(rate_limit_key)
+        count = await redis_client.incr(rate_limit_key)
 
         if count == 1:
-            redis_client.expire(rate_limit_key,1800)
+            await redis_client.expire(rate_limit_key,300)
 
         if count > 5:
             raise HTTPException(status_code=429,detail="Too many request. Try Again Later")    

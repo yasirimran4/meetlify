@@ -18,3 +18,11 @@ class UserNotFoundError(AppException):
         message: str = "User not found"
     ):
         super().__init__(message)
+
+class UserAlreadyExist(AppException):
+
+    def __init__(
+        self,
+        message: str = "User already found"
+    ):
+        super().__init__(message)        

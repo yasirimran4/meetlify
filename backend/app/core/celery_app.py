@@ -6,6 +6,7 @@ celery_app.conf.imports = [
     "tasks.email_task",
     "tasks.reminder_task",
     "tasks.check_upcoming_events_task",
+    "tasks.complete_event",
 ]
 
 celery_app.conf.beat_schedule = {
@@ -14,7 +15,7 @@ celery_app.conf.beat_schedule = {
         "schedule": 60.0,
     },
       "check-event-date": {
-        "task": "tasks.complete_event.complete_event",
+        "task": "tasks.complete_event.complete_expired_events",
         "schedule": 60.0,
     },
 }

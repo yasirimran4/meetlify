@@ -14,10 +14,10 @@ class RegitrationService:
 
         rate_limit_key = f"rate_limit:register:{request.email}"
 
-        count = redis_client.incr(rate_limit_key)
+        count = await redis_client.incr(rate_limit_key)
 
         if count == 1:
-            redis_client.expire(rate_limit_key,3600)
+            await redis_client.expire(rate_limit_key,300)
 
         if count > 5:
             if count > 5:

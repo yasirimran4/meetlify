@@ -25,7 +25,7 @@ async def create_admin():
 
         if admin is not None:
             raise UserAlreadyExist()
-
+        
         hashed_password = hash_password(admin_password)
 
         user = User(

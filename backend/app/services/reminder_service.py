@@ -3,6 +3,7 @@ from core.database import SessionLocal
 from repositories.registration import regitration_repo
 from services.event import event_service
 from tasks.reminder_task import send_reminder_email
+
 class ReminderService:
     async def send_reminder_emails(self):
         async with SessionLocal() as session: 

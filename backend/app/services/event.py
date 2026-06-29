@@ -39,7 +39,7 @@ class EventService:
 
     async def get_upcoming_events(self,page,limit,search,session):
 
-        cached = redis_client.get("events:upcoming")
+        cached = await redis_client.get("events:upcoming")
 
         if cached:
             print("Cashed Call")
@@ -64,13 +64,13 @@ class EventService:
             for event in events
         ]
 
-        redis_client.set("events:upcoming",json.dumps(result),ex=3600)
+        await redis_client.set("events:upcoming",json.dumps(result),ex=3600)
 
         return events
     
     async def get_completed_events(self,page,limit,search,session):
 
-        cached = redis_client.get("events:completed")
+        cached =await redis_client.get("events:completed")
 
         if cached:
             print("Cashed Call")
@@ -95,14 +95,14 @@ class EventService:
             for event in events
         ]
 
-        redis_client.set("events:completed",json.dumps(result),ex=3600)
+        await redis_client.set("events:completed",json.dumps(result),ex=3600)
 
         return events
     
     async def get_single_event(self,session,event_id):
 
         event_detail_key = f"event:{event_id}"
-        cached = redis_client.get(event_detail_key)
+        cached = await redis_client.get(event_detail_key)
 
         if cached:
             print("Cashed Call")
@@ -128,7 +128,7 @@ class EventService:
                 "video_url" : event.video_url
             }
         
-        redis_client.set(event_detail_key,json.dumps(result),ex=3600)
+        await redis_client.set(event_detail_key,json.dumps(result),ex=3600)
 
         return event
  
@@ -159,9 +159,9 @@ class EventService:
 
         event = await event_repo.delete_event(session,event_id) 
  
-        redis_client.delete("events:upcoming")
-        redis_client.delete("events:completed")
-        redis_client.delete(f"event:{event_id}")
+        await redis_client.delete("events:upcoming")
+        await redis_client.delete("events:completed")
+        await redis_client.delete(f"event:{event_id}")
 
         return event
        

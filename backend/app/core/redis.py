@@ -1,9 +1,8 @@
-import redis
+from redis.asyncio import Redis
+from core.config import settings
 
-redis_client = redis.Redis(
-    host="redis",
-    port=6379,
+redis_client = Redis.from_url(
+    settings.REDIS_URL,
     decode_responses=True
 )
-
 

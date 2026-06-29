@@ -13,14 +13,7 @@ services:
     ports:
       - "8000:8000"
 
-    depends_on:
-      - redis
-
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-
-  redis:
-    image: redis:7
-    container_name: meetlify_redis
 
   worker:
     build: .
@@ -31,9 +24,6 @@ services:
 
     env_file:
       - .env
-
-    depends_on:
-      - redis
 
     command: celery -A core.celery_app.celery_app worker --loglevel=info
 
@@ -48,7 +38,6 @@ services:
       - .env
 
     depends_on:
-      - redis
       - worker
 
     command: celery -A core.celery_app.celery_app beat --loglevel=info
