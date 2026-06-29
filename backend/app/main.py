@@ -5,7 +5,7 @@ from routes.auth import auth_router
 from core.exception_handler import app_exception_handler
 from exceptions.base import AppException
 from fastapi.middleware.cors import CORSMiddleware
-
+from core.config import settings
 app = FastAPI(title="Meetlify Event Management System",version='1.0.1')
 
 @app.get('/health')
@@ -17,7 +17,7 @@ async def health():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",
+        settings.ALLOWED_ORIGINS.split(",")
     ],
     allow_credentials=True,
     allow_methods=["*"],

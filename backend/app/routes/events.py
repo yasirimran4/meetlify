@@ -1,3 +1,4 @@
+# Public Routes for events 
 
 from fastapi import APIRouter , Depends , Query
 from core.dependency import get_db ,get_admin

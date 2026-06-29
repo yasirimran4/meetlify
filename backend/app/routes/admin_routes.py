@@ -1,3 +1,4 @@
+# Admin Routes protected . A separet admin panel in frontend
 
 from fastapi import APIRouter , Depends, UploadFile , File  , Query
 from core.dependency import get_db , get_admin

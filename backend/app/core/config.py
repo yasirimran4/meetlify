@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 import cloudinary
 load_dotenv() # For loading env variable
 
-
 class Setting(BaseSettings):
     DATABASE_URL : str | None 
     SECRET_KEY : str | None 
@@ -21,7 +20,7 @@ class Setting(BaseSettings):
     SMTP_USERNAME : str 
     SMTP_PASSWORD: str 
     EMAIL_FROM : str 
-
+    ALLOWED_ORIGINS: str
     model_config = SettingsConfigDict(
         env_file = '.env',
         extra = 'ignore'

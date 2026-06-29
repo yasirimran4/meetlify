@@ -1,3 +1,4 @@
+# Auth Routes login only for admin no signup
 
 from fastapi import APIRouter ,Depends ,HTTPException, status
 from schemas.auth import *
