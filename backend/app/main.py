@@ -17,7 +17,7 @@ async def health():
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        settings.ALLOWED_ORIGINS.split(",")
+        settings.ALLOWED_ORIGIN
     ],
     allow_credentials=True,
     allow_methods=["*"],
