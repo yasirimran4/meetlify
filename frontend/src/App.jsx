@@ -1,26 +1,14 @@
-import axios from 'axios'
-import { useState } from 'react'
+import { Navigate, Route, Routes } from 'react-router-dom'
+import AdminLoginPage from './features/auth/pages/AdminLoginPage'
+import { ADMIN_ROUTES } from './constants/api'
+
 function App() {
-
-  const [status,setStatus] = useState("")
-
-  const fetchData =async () => {
-    try {
-      const data = await axios.get("${import.meta.env.VITE_API_URL}/health")
-      console.log(data)
-      setStatus(data)
-    } catch (error) {
-     console.log(error) 
-    }
-  }
   return (
-    <>
-       <div>
-        <h1>Yasir Imran</h1>
-        <button onClick={fetchData}>Click</button>
-        {status & <p>status</p>}
-       </div>
-    </>
+    <Routes>
+      <Route path={ADMIN_ROUTES.login} element={<AdminLoginPage />} />
+      <Route path="/" element={<Navigate to={ADMIN_ROUTES.login} replace />} />
+      <Route path="*" element={<Navigate to={ADMIN_ROUTES.login} replace />} />
+    </Routes>
   )
 }
 
