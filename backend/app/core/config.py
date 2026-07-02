@@ -3,6 +3,7 @@
 from pydantic_settings import BaseSettings , SettingsConfigDict
 from dotenv import load_dotenv
 import cloudinary
+
 load_dotenv() # For loading env variable
 
 class Setting(BaseSettings):
