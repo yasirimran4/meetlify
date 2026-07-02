@@ -6,12 +6,19 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from core.dependency import get_db
 from services.auth import auth_service
 from utils.jwt_util import decode_token , create_access_token
+from utils.success_response import success_response
 auth_router = APIRouter(prefix='/api/v1/auth' ,tags=["Authentication"])
 
 
 @auth_router.post("/login",response_model = UserLoginResponse)
 async def login(request:UserLogin,session:AsyncSession = Depends(get_db)):
-    return await auth_service.login(request,session)
+    data = await auth_service.login(request,session)
+
+    return success_response(
+        data=data,
+        message="User Logged In Successfully",
+        status_code=200
+    )
 
 @auth_router.post("/refresh")
 async def refresh_token(token:str):
@@ -27,6 +34,10 @@ async def refresh_token(token:str):
 
     access_token = create_access_token({"sub" : payload["sub"]})  
 
-    return {"access_token" : access_token}
+    return success_response(
+        data=access_token,
+        message="Token Refresh Successfully",
+        status_code=200
+    )
 
        

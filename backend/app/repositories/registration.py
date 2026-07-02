@@ -1,6 +1,10 @@
 from models.registration import Registration
 from sqlalchemy import select ,update ,func
 
+import logging
+
+logger  = logging.getLogger(__name__)
+
 class RegitrationRepository:
     async def register_event(self,payload,session):
         try:
@@ -13,7 +17,7 @@ class RegitrationRepository:
             return payload
 
         except Exception as e:
-            print("DB Error: ",str(e)) 
+            logger.exception("DB Error.") 
 
     
 
@@ -31,7 +35,8 @@ class RegitrationRepository:
             return registrations.scalars().all()
 
         except Exception as e:
-            print("DB Error: ",str(e)) 
+            logger.exception("DB Error.") 
+ 
 
     async def get_registrations_count(self,session):
         try:
@@ -39,7 +44,8 @@ class RegitrationRepository:
             return registrations.scalar()
 
         except Exception as e:
-            print("DB Error: ",str(e))             
+            logger.exception("DB Error") 
+             
 
     async def mark_reminder_sent(self,registration_id,session):
         try:
@@ -47,7 +53,8 @@ class RegitrationRepository:
             await session.commit()
 
         except Exception as e:
-            print("DB Error: ",str(e))        
+            logger.exception("DB Error.") 
+        
                  
 
 regitration_repo = RegitrationRepository()

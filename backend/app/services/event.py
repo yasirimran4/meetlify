@@ -1,4 +1,4 @@
-from exceptions.event import InvalidFomrat , EventNotFoundError
+from exceptions.event import InvalidFormat , EventNotFoundError
 from models.event import Event 
 from repositories.event import event_repo
 from services.cloudinary_service import cloudinary_service
