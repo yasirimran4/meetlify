@@ -11,14 +11,14 @@ app = FastAPI(title="Meetlify Event Management System",version='1.0.1')
 
 @app.get('/health')
 async def health():
-    return {"status" : "Yes it's working" }
+    return {"status" : "Yes it's working" , "allowed_origins" : settings.ALLOWED_ORIGINS }
 
 
 # CORS Settings
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        settings.ALLOWED_ORIGINS
+        settings.ALLOWED_ORIGINS.split(",")
     ],
     allow_credentials=True,
     allow_methods=["*"],
