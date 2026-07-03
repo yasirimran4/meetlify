@@ -3,6 +3,7 @@ from sqlalchemy import select
 from models.user import User
 from sqlalchemy.ext.asyncio import AsyncSession
 import logging
+from sqlalchemy.exc import SQLAlchemyError
 
 logger  = logging.getLogger(__name__)
 
@@ -22,8 +23,9 @@ class AuthRepository:
             user = await session.execute(select(User).where(User.id == id))
             return user.scalar_one_or_none()
 
-        except Exception as e:
-            logger.exception("DB Error. User not found") 
+        except SQLAlchemyError:
+            logger.exception("Database error while fetching user.")
+            raise 
    
     
     async def create_user(self,user,session):
@@ -36,8 +38,9 @@ class AuthRepository:
 
             return user
         
-        except Exception as e:
-            logger.exception("DB Error. User not created.") 
+        except SQLAlchemyError:
+            logger.exception("Database error while creating user.") 
+            raise
    
 
 auth_repo = AuthRepository()
