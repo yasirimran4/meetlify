@@ -23,3 +23,15 @@ export function getAccessToken() {
     sessionStorage.getItem(STORAGE_KEYS.accessToken)
   )
 }
+
+export function getRefreshToken() {
+  return (
+    localStorage.getItem(STORAGE_KEYS.refreshToken) ??
+    sessionStorage.getItem(STORAGE_KEYS.refreshToken)
+  )
+}
+
+export function isAuthenticated() {
+  const token = getAccessToken()
+  return Boolean(token)
+}

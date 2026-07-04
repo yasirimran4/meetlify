@@ -1,5 +1,5 @@
 from exceptions.event import InvalidFormat , EventNotFoundError
-from models.event import Event 
+from models.event import Event, Status
 from repositories.event import event_repo
 from services.cloudinary_service import cloudinary_service
 from core.redis import redis_client
@@ -10,6 +10,23 @@ from core.redis import redis_client
 import math
 
 class EventService:
+    def _format_event(self, event):
+        if not event: return None
+        return {
+            "id" : event.id,
+            "title": event.title,
+            "description": event.description,
+            "speaker_name": event.speaker_name,
+            "meeting_link": str(event.meeting_link),
+            "event_date_time": str(event.event_date_time),
+            "status": event.status,
+            "created_at": str(event.created_at),
+            "updated_at": str(event.updated_at),
+            "thumbnail_public_id": event.thumbnail_public_id,
+            "thumbnail_url": str(event.thumbnail_url),
+            "video_url" : event.video_url
+        }
+
     async def create_event(self,request, session ):
 
         event = Event(
@@ -22,7 +39,8 @@ class EventService:
             thumbnail_url = str(request.thumbnail_url)
             )
 
-        return await event_repo.create_event(event,session=session)
+        created_event = await event_repo.create_event(event,session=session)
+        return self._format_event(created_event)
 
     async def upload_thumbnail(self,thumbnail):
 
@@ -33,71 +51,36 @@ class EventService:
         ]
         
         if thumbnail.content_type not in ALLOWED_TYPES:  # Allowed types
-            raise InvalidFomrat()
+            raise InvalidFormat()
         
         return await cloudinary_service.upload_image(thumbnail)   # Cloudinary service to upload thumbnail
 
-    async def get_upcoming_events(self,page,limit,search,session):
+    async def get_events(self, page, limit, search, status, session):
+        cache_key = f"events:list:{page}:{limit}:{search}:{status}"
+        cached = await redis_client.get(cache_key)
 
-        cached = await redis_client.get("events:upcoming")
-
-        if cached:
-            print("Cashed Call")
-            return json.loads(cached)
+        # if cached:
+        #     print("Cashed Call")
+        #     return json.loads(cached)
+            
+        result_data = await event_repo.get_events(session, page, limit, search, status)
+        events = result_data["items"]
         
-        events = await event_repo.get_upcoming_events(page,limit,search,session)
-        result = [
-            {
-                "id" : event.id,
-                "title": event.title,
-                "description": event.description,
-                "speaker_name": event.speaker_name,
-                "meeting_link": str(event.meeting_link),
-                "event_date_time": str(event.event_date_time),
-                "status": event.status,
-                "created_at": str(event.created_at),
-                "updated_at": str(event.updated_at),
-                "thumbnail_public_id": event.thumbnail_public_id,
-                "thumbnail_url": str(event.thumbnail_url),
-                "video_url" : event.video_url
-            }
-            for event in events
-        ]
+        formatted_items = [self._format_event(event) for event in events]
+        
+        result = {
+            "items": formatted_items,
+            "pagination": result_data["pagination"]
+        }
 
-        await redis_client.set("events:upcoming",json.dumps(result),ex=3600)
+        await redis_client.set(cache_key, json.dumps(result), ex=3600)
+        return result
 
-        return events
+    async def get_upcoming_events(self,page,limit,search,session):
+        return await self.get_events(page, limit, search, Status.PUBLISHED, session)
     
     async def get_completed_events(self,page,limit,search,session):
-
-        cached =await redis_client.get("events:completed")
-
-        if cached:
-            print("Cashed Call")
-            return json.loads(cached)
-        
-        events = await event_repo.get_completed_events(page,limit,search,session)
-        result = [
-            {
-                "id" : event.id,
-                "title": event.title,
-                "description": event.description,
-                "speaker_name": event.speaker_name,
-                "meeting_link": str(event.meeting_link),
-                "event_date_time": str(event.event_date_time),
-                "status": event.status,
-                "created_at": str(event.created_at),
-                "updated_at": str(event.updated_at),
-                "thumbnail_public_id": event.thumbnail_public_id,
-                "thumbnail_url": str(event.thumbnail_url),
-                "video_url" : event.video_url
-            }
-            for event in events
-        ]
-
-        await redis_client.set("events:completed",json.dumps(result),ex=3600)
-
-        return events
+        return await self.get_events(page, limit, search, Status.COMPLETED, session)
     
     async def get_single_event(self,session,event_id):
 
@@ -113,24 +96,11 @@ class EventService:
         if event is None:
             raise EventNotFoundError()
         
-        result = {
-                "id" : event.id,
-                "title": event.title,
-                "description": event.description,
-                "speaker_name": event.speaker_name,
-                "meeting_link": str(event.meeting_link),
-                "event_date_time": str(event.event_date_time),
-                "status": event.status,
-                "created_at": str(event.created_at),
-                "updated_at": str(event.updated_at),
-                "thumbnail_public_id": event.thumbnail_public_id,
-                "thumbnail_url": str(event.thumbnail_url),
-                "video_url" : event.video_url
-            }
+        result = self._format_event(event)
         
         await redis_client.set(event_detail_key,json.dumps(result),ex=3600)
 
-        return event
+        return result
  
     async def update_event(self,session,event_id,request):
 
@@ -145,11 +115,9 @@ class EventService:
 
         event = await event_repo.update_event(session,event_id,update_data) 
         
-        redis_client.delete("events:upcoming")
-        redis_client.delete("events:completed")
-        redis_client.delete(f"event:{event_id}")
+        await redis_client.delete(f"event:{event_id}")
 
-        return event
+        return self._format_event(event)
     
     async def delete_event(self,session,event_id):
         event = await event_repo.get_single_event(session,event_id) 
@@ -159,11 +127,9 @@ class EventService:
 
         event = await event_repo.delete_event(session,event_id) 
  
-        await redis_client.delete("events:upcoming")
-        await redis_client.delete("events:completed")
         await redis_client.delete(f"event:{event_id}")
 
-        return event
+        return self._format_event(event)
        
     async def upload_video_url(self,session,event_id,video_url):
 
@@ -174,13 +140,14 @@ class EventService:
 
         event = await event_repo.upload_video_url(session,event_id,str(video_url)) 
 
-        return event
+        return self._format_event(event)
        
     async def publish_event(self,session,event_id):
-        return await event_repo.publish_event(session,event_id) 
+        event = await event_repo.publish_event(session,event_id)
+        return self._format_event(event)
 
     async def list_registrations(self,event_id,page,limit,session):
-        event = await event_service.get_single_event(session,event_id)
+        event = await self.get_single_event(session,event_id)
 
         all_registrations = await event_repo.get_all_registrations_by_event_id(event_id,session)
 
@@ -216,4 +183,3 @@ class EventService:
             )
        
 event_service = EventService()       
-

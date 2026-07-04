@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
-import { CheckCircle2 } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
 import Button from '../../../components/ui/Button'
 import Input from '../../../components/ui/Input'
 import Label from '../../../components/ui/Label'
@@ -9,15 +8,18 @@ import { login } from '../../../services/authService'
 import { saveTokens } from '../../../utils/storage'
 import { validateLoginForm, hasValidationErrors } from '../../../utils/validation'
 import { parseApiError } from '../../../utils/apiError'
+import { ADMIN_ROUTES } from '../../../constants/api'
+import { useAuth } from '../../../contexts/AuthContext'
 
 export default function LoginForm({ onServerError }) {
+  const navigate = useNavigate()
+  const { refreshAuthState } = useAuth()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [rememberMe, setRememberMe] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isSuccess, setIsSuccess] = useState(false)
 
   function handleFieldChange(setter, field) {
     return (event) => {
@@ -62,7 +64,8 @@ export default function LoginForm({ onServerError }) {
         rememberMe,
       })
 
-      setIsSuccess(true)
+      refreshAuthState()
+      navigate(ADMIN_ROUTES.dashboard, { replace: true })
     } catch (error) {
       const parsed = parseApiError(error)
 
@@ -105,21 +108,6 @@ export default function LoginForm({ onServerError }) {
         </p>
       </div>
 
-      {isSuccess ? (
-        <div
-          role="status"
-          className="mb-6 flex items-start gap-3 rounded-lg border border-green-200 bg-green-50 px-4 py-3"
-        >
-          <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" aria-hidden="true" />
-          <div>
-            <p className="text-sm font-semibold text-success">Signed in successfully</p>
-            <p className="mt-0.5 text-sm text-text-secondary">
-              Your session is active. The admin dashboard will be available in the next release.
-            </p>
-          </div>
-        </div>
-      ) : null}
-
       <form onSubmit={handleSubmit} noValidate className="space-y-6">
         <div>
           <Label htmlFor="email" required>
@@ -134,7 +122,7 @@ export default function LoginForm({ onServerError }) {
             value={email}
             onChange={handleFieldChange(setEmail, 'email')}
             error={fieldErrors.email}
-            disabled={isSubmitting || isSuccess}
+            disabled={isSubmitting}
           />
         </div>
 
@@ -151,7 +139,7 @@ export default function LoginForm({ onServerError }) {
             value={password}
             onChange={handleFieldChange(setPassword, 'password')}
             error={fieldErrors.password}
-            disabled={isSubmitting || isSuccess}
+            disabled={isSubmitting}
             endAdornment={
               <button
                 type="button"
@@ -171,7 +159,7 @@ export default function LoginForm({ onServerError }) {
             label="Remember me"
             checked={rememberMe}
             onChange={(event) => setRememberMe(event.target.checked)}
-            disabled={isSubmitting || isSuccess}
+            disabled={isSubmitting}
           />
           <Link
             to="#"
@@ -184,7 +172,7 @@ export default function LoginForm({ onServerError }) {
           </Link>
         </div>
 
-        <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting || isSuccess}>
+        <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
           Sign In
         </Button>
       </form>

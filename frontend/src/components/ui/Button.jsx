@@ -4,6 +4,8 @@ const variants = {
   primary:
     'bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-primary/30',
   ghost: 'bg-transparent text-text-secondary hover:text-text-primary hover:bg-surface-subtle',
+  outline:
+    'border border-border bg-surface text-text-primary hover:bg-surface-subtle focus-visible:ring-primary/30',
 }
 
 const sizes = {
@@ -18,6 +20,7 @@ export default function Button({
   size = 'md',
   isLoading = false,
   disabled = false,
+  fullWidth = true,
   type = 'button',
   ...props
 }) {
@@ -28,9 +31,10 @@ export default function Button({
       type={type}
       disabled={isDisabled}
       className={[
-        'inline-flex w-full items-center justify-center gap-2 rounded-lg font-semibold transition-colors',
+        'inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
         'disabled:cursor-not-allowed disabled:opacity-60',
+        fullWidth ? 'w-full' : 'w-auto',
         variants[variant],
         sizes[size],
         className,
