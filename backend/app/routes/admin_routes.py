@@ -15,7 +15,7 @@ from utils.success_response import success_response
 admin_router = APIRouter(prefix='/api/v1/admin/events' ,tags=["Admin Events"])
 admin_registrations_router = APIRouter(prefix='/api/v1/admin/registrations' ,tags=["Admin Registrations"])
 
-@admin_registrations_router.get('/', response_model=GlobalRegistrationList)
+@admin_registrations_router.get('', response_model=GlobalRegistrationList)
 async def get_all_registrations_global(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=10, le=100),
@@ -32,7 +32,7 @@ async def get_all_registrations_global(
         status_code=200
     )
 
-@admin_router.get('/')
+@admin_router.get('')
 async def get_all_events(
     page: int = Query(default=1, ge=1),
     limit: int = Query(default=10, le=100),
@@ -67,7 +67,7 @@ async def upload_thumbnail(thumbnail : UploadFile = File(...),admin:User = Depen
         status_code=200
     )
 
-@admin_router.post('/')     #  Protected Route
+@admin_router.post('')     #  Protected Route
 async def create_event(request : CreateEventRequest,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
     event =  await event_service.create_event(request,session)
     return success_response(

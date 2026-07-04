@@ -13,7 +13,7 @@ export const ADMIN_API = {
   publishEvent: (eventId) => `/api/v1/admin/events/${eventId}/publish`,
   uploadVideoUrl: (eventId) => `/api/v1/admin/events/${eventId}/upload-video-url`,
   deleteEvent: (eventId) => `/api/v1/admin/events/${eventId}`,
-  createEvent: '/api/v1/admin/events/',
+  createEvent: '/api/v1/admin/events',
   updateEvent: (eventId) => `/api/v1/admin/events/${eventId}`,
   uploadThumbnail: '/api/v1/admin/events/upload-thumbnail',
   allRegistrations: '/api/v1/admin/registrations',
