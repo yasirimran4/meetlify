@@ -18,3 +18,10 @@ export const SORT_OPTIONS = [
 ]
 
 export const PAGE_SIZE_OPTIONS = [10, 25, 50]
+
+export const EVENT_DETAIL_TABS = {
+  OVERVIEW: 'overview',
+  REGISTRATIONS: 'registrations',
+  ANALYTICS: 'analytics',
+  RECORDING: 'recording',
+}

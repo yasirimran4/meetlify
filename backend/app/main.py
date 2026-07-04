@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from routes.events import event_router
-from routes.admin_routes import admin_router
+from routes.admin_routes import admin_router, admin_registrations_router
 from routes.auth import auth_router
 from fastapi.exceptions import RequestValidationError
 from core.exception_handler import app_exception_handler , validation_exception_handler, generic_exception_handler
@@ -25,6 +25,7 @@ app.add_middleware(
 
 # Including routes
 app.include_router(router=admin_router)
+app.include_router(router=admin_registrations_router)
 app.include_router(router=event_router)
 app.include_router(router=auth_router)
 

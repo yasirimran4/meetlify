@@ -35,6 +35,14 @@ class RegistrationList(BaseModel):
     items : list
     pagination : RegistrationPagination     #    Nested Model
 
+class GlobalRegistrationResponse(RegistrationResponse):
+    event_id: int
+    event_title: str
+
+class GlobalRegistrationList(BaseModel):
+    items: list[GlobalRegistrationResponse]
+    pagination: RegistrationPagination
+
 class DashboardResponse(BaseModel):
     total_events:int
     upcoming_events:int

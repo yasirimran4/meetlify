@@ -1,4 +1,4 @@
-import { LayoutDashboard, CalendarDays, UserRound } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, UserRound, Users } from 'lucide-react'
 import { ADMIN_ROUTES } from './api'
 
 export const ADMIN_NAV_ITEMS = [
@@ -12,6 +12,12 @@ export const ADMIN_NAV_ITEMS = [
     label: 'Events',
     to: ADMIN_ROUTES.events,
     icon: CalendarDays,
+    end: false,
+  },
+  {
+    label: 'Registrations',
+    to: ADMIN_ROUTES.registrations,
+    icon: Users,
     end: false,
   },
   {

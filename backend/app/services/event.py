@@ -27,6 +27,16 @@ class EventService:
             "video_url" : event.video_url
         }
 
+    async def _clear_event_caches(self, event_id=None):
+        """Helper to invalidate redis caches for events"""
+        if event_id:
+            await redis_client.delete(f"event:{event_id}")
+        
+        # Invalidate paginated lists
+        keys = await redis_client.keys("events:list:*")
+        if keys:
+            await redis_client.delete(*keys)
+
     async def create_event(self,request, session ):
 
         event = Event(
@@ -40,6 +50,7 @@ class EventService:
             )
 
         created_event = await event_repo.create_event(event,session=session)
+        await self._clear_event_caches()
         return self._format_event(created_event)
 
     async def upload_thumbnail(self,thumbnail):
@@ -59,9 +70,9 @@ class EventService:
         cache_key = f"events:list:{page}:{limit}:{search}:{status}"
         cached = await redis_client.get(cache_key)
 
-        # if cached:
-        #     print("Cashed Call")
-        #     return json.loads(cached)
+        if cached:
+            print("Cashed Call")
+            return json.loads(cached)
             
         result_data = await event_repo.get_events(session, page, limit, search, status)
         events = result_data["items"]
@@ -115,7 +126,7 @@ class EventService:
 
         event = await event_repo.update_event(session,event_id,update_data) 
         
-        await redis_client.delete(f"event:{event_id}")
+        await self._clear_event_caches(event_id)
 
         return self._format_event(event)
     
@@ -127,7 +138,7 @@ class EventService:
 
         event = await event_repo.delete_event(session,event_id) 
  
-        await redis_client.delete(f"event:{event_id}")
+        await self._clear_event_caches(event_id)
 
         return self._format_event(event)
        
@@ -140,10 +151,13 @@ class EventService:
 
         event = await event_repo.upload_video_url(session,event_id,str(video_url)) 
 
+        await self._clear_event_caches(event_id)
+
         return self._format_event(event)
        
     async def publish_event(self,session,event_id):
         event = await event_repo.publish_event(session,event_id)
+        await self._clear_event_caches(event_id)
         return self._format_event(event)
 
     async def list_registrations(self,event_id,page,limit,session):
@@ -180,6 +194,6 @@ class EventService:
         return EventAnalytics(
                 registrations=registration_count,
                 status=event.status
-            )
+            ).model_dump()
        
 event_service = EventService()       

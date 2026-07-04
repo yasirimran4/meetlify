@@ -1,53 +1,9 @@
+import { Eye, Pencil, Trash2, UploadCloud } from 'lucide-react'
 import Badge from '../../../../components/ui/Badge'
-import DropdownMenu from '../../../../components/ui/DropdownMenu'
+import Button from '../../../../components/ui/Button'
 import EmptyState from '../../../../components/ui/EmptyState'
 import { EVENT_STATUS } from '../../../../constants/events'
 import { formatEventDate, formatNumber } from '../../../../utils/format'
-
-export default function EventActionsMenu({ event, onView, onEdit, onPublish, onDelete }) {
-  const isDraft = event.status === EVENT_STATUS.DRAFT
-  const isCompleted = event.status === EVENT_STATUS.COMPLETED
-
-  const items = [
-    {
-      key: 'view',
-      label: 'View',
-      onClick: () => onView(event),
-    },
-    {
-      key: 'edit',
-      label: 'Edit',
-      onClick: () => onEdit(event),
-      disabled: isCompleted,
-    },
-    {
-      key: 'publish',
-      label: 'Publish',
-      onClick: () => onPublish(event),
-      disabled: !isDraft,
-    },
-    {
-      key: 'unpublish',
-      label: 'Unpublish unavailable',
-      onClick: () => {},
-      disabled: true,
-    },
-    {
-      key: 'delete',
-      label: 'Delete',
-      onClick: () => onDelete(event),
-      destructive: true,
-      disabled: isCompleted,
-    },
-  ]
-
-  return (
-    <DropdownMenu
-      triggerLabel={`Actions for ${event.title}`}
-      items={items}
-    />
-  )
-}
 
 export function EventsTable({
   events,
@@ -85,43 +41,92 @@ export function EventsTable({
           </tr>
         </thead>
         <tbody className="divide-y divide-border bg-surface">
-          {events.map((event) => (
-            <tr key={event.id} className="hover:bg-surface-muted/60">
-              <td className="px-5 py-4">
-                <p className="font-semibold text-text-primary">{event.title}</p>
-                <p className="mt-1 max-w-xl text-sm text-text-secondary">{event.description}</p>
-              </td>
-              <td className="px-5 py-4 space-y-2">
-                <div>
-                  <Badge status={event.status} />
-                </div>
-                {event.status === EVENT_STATUS.COMPLETED && event.videoUrl ? (
+          {events.map((event) => {
+            const isDraft = event.status === EVENT_STATUS.DRAFT
+            const isCompleted = event.status === EVENT_STATUS.COMPLETED
+
+            return (
+              <tr key={event.id} className="hover:bg-surface-muted/60 transition-colors group">
+                <td className="px-5 py-4">
+                  <button
+                    type="button"
+                    onClick={() => onView(event)}
+                    className="text-left font-semibold text-text-primary hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded"
+                  >
+                    {event.title}
+                  </button>
+                  <p className="mt-1 max-w-xl text-sm text-text-secondary line-clamp-2">{event.description}</p>
+                </td>
+                <td className="px-5 py-4 space-y-2">
                   <div>
-                    <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
-                      Recording Available
-                    </span>
+                    <Badge status={event.status} />
                   </div>
-                ) : null}
-              </td>
-              <td className="px-5 py-4 text-sm whitespace-nowrap text-text-secondary">
-                {formatEventDate(event.eventDateTime)}
-              </td>
-              <td className="px-5 py-4 text-sm text-text-primary">
-                {registrationCounts[event.id] == null
-                  ? '—'
-                  : formatNumber(registrationCounts[event.id])}
-              </td>
-              <td className="px-5 py-4">
-                <EventActionsMenu
-                  event={event}
-                  onView={onView}
-                  onEdit={onEdit}
-                  onPublish={onPublish}
-                  onDelete={onDelete}
-                />
-              </td>
-            </tr>
-          ))}
+                  {isCompleted && event.videoUrl ? (
+                    <div>
+                      <span className="inline-flex items-center rounded-md bg-purple-50 px-2 py-1 text-xs font-medium text-purple-700 ring-1 ring-inset ring-purple-700/10">
+                        Recording Available
+                      </span>
+                    </div>
+                  ) : null}
+                </td>
+                <td className="px-5 py-4 text-sm whitespace-nowrap text-text-secondary">
+                  {formatEventDate(event.eventDateTime)}
+                </td>
+                <td className="px-5 py-4 text-sm text-text-primary">
+                  {registrationCounts[event.id] == null
+                    ? '—'
+                    : formatNumber(registrationCounts[event.id])}
+                </td>
+                <td className="px-5 py-4">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      fullWidth={false}
+                      className="h-8 w-8 p-0"
+                      onClick={() => onView(event)}
+                      title="View Details"
+                    >
+                      <Eye className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">View</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      fullWidth={false}
+                      className="h-8 w-8 p-0"
+                      onClick={() => onEdit(event)}
+                      disabled={isCompleted}
+                      title="Edit Event"
+                    >
+                      <Pencil className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Edit</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      fullWidth={false}
+                      className="h-8 w-8 p-0"
+                      onClick={() => onPublish(event)}
+                      disabled={!isDraft}
+                      title={isDraft ? "Publish Event" : "Already Published"}
+                    >
+                      <UploadCloud className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Publish</span>
+                    </Button>
+                    <Button
+                      variant="outline"
+                      fullWidth={false}
+                      className="h-8 w-8 p-0 text-error hover:bg-error-muted hover:text-error hover:border-error-border"
+                      onClick={() => onDelete(event)}
+                      disabled={isCompleted}
+                      title="Delete Event"
+                    >
+                      <Trash2 className="h-4 w-4" aria-hidden="true" />
+                      <span className="sr-only">Delete</span>
+                    </Button>
+                  </div>
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

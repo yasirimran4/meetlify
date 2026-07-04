@@ -10,6 +10,7 @@ export default function Pagination({
   pageSizeOptions,
   onPageChange,
   onPageSizeChange,
+  itemLabel = 'events',
 }) {
   return (
     <div className="flex flex-col gap-4 border-t border-border px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
@@ -30,7 +31,9 @@ export default function Pagination({
           ))}
         </select>
         <span className="whitespace-nowrap">
-          {totalItems === 0 ? '0 events' : `${start}-${end} of ${totalItems} events`}
+          {totalItems === 0
+            ? `0 ${itemLabel}`
+            : `${start}-${end} of ${totalItems} ${itemLabel}`}
         </span>
       </div>
 

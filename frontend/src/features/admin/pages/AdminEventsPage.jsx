@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import Alert from '../../../components/ui/Alert'
 import Button from '../../../components/ui/Button'
@@ -10,8 +11,10 @@ import Pagination from '../../../components/ui/Pagination'
 import EventsToolbar from '../components/events/EventsToolbar'
 import { EventsTable } from '../components/events/EventsTable'
 import { useEventsData } from '../../../hooks/useEventsData'
+import { ADMIN_ROUTES } from '../../../constants/api'
 
 export default function AdminEventsPage() {
+  const navigate = useNavigate()
   const {
     events,
     pagination,
@@ -38,14 +41,17 @@ export default function AdminEventsPage() {
 
   const [pendingDeleteEvent, setPendingDeleteEvent] = useState(null)
   const [isDeleting, setIsDeleting] = useState(false)
-  const [infoMessage, setInfoMessage] = useState(null)
 
-  function handleView() {
-    setInfoMessage('Event details will be available in a future release.')
+  function handleView(event) {
+    navigate(ADMIN_ROUTES.eventDetails(event.id))
   }
 
-  function handleEdit() {
-    setInfoMessage('Event editing will be available in a future release.')
+  function handleCreate() {
+    navigate(ADMIN_ROUTES.eventCreate)
+  }
+
+  function handleEdit(event) {
+    navigate(ADMIN_ROUTES.eventEdit(event.id))
   }
 
   function handlePublish(event) {
@@ -71,7 +77,7 @@ export default function AdminEventsPage() {
         title="Events"
         description="Manage and monitor all platform events."
         actions={
-          <Button fullWidth={false} className="px-4" disabled>
+          <Button fullWidth={false} className="px-4" onClick={handleCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
             Create Event
           </Button>
@@ -84,15 +90,6 @@ export default function AdminEventsPage() {
           className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700"
         >
           {actionMessage}
-        </div>
-      ) : null}
-
-      {infoMessage ? (
-        <div
-          role="status"
-          className="rounded-lg border border-border bg-surface-subtle px-4 py-3 text-sm text-text-secondary"
-        >
-          {infoMessage}
         </div>
       ) : null}
 

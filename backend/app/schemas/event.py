@@ -5,7 +5,7 @@ from models.event import Status
 
 class CreateEventRequest(BaseModel):
     title : Annotated[str,Field(...,min_length=5,max_length=500,title="Event Name",description="Title of Event")] 
-    description : Annotated[str,Field(...,min_length=100,max_length=2048,title="Event Description",description="Description of Event")] 
+    description : Annotated[str,Field(...,min_length=100,max_length=5000,title="Event Description",description="Description of Event")] 
     speaker_name : Annotated[str,Field(...,min_length=5,max_length=100,title="Speaker Name",description="Speaker name")] 
     meeting_link : Annotated[AnyUrl,Field(...,title="Event Meet link",description="Meet link of Event")] 
     event_date_time : Annotated[datetime,Field(... ,title="Event Date and Time")] 

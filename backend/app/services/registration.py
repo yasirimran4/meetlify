@@ -7,6 +7,7 @@ from repositories.event import event_repo
 from core.redis import redis_client
 from exceptions.registration import *
 from fastapi import HTTPException
+from schemas.registration import GlobalRegistrationResponse
 
 
 class RegitrationService:
@@ -60,6 +61,23 @@ class RegitrationService:
         completed_events = await event_repo.completed_events_count(session=session)
 
         return {"total_events" : upcoming_events + completed_events, "upcoming_events" : upcoming_events,"completed_events": completed_events,"total_registrations":total_registrations}
+
+    async def list_all_registrations(self, page, limit, search, event_id, status, session):
+        # We can implement caching if needed, but since it has many filters, direct DB query is safer for now
+        registrations_data = await regitration_repo.get_all_registrations_global(page, limit, search, event_id, status, session)
+        
+        # We don't need to model_validate if we constructed the dict directly in repo, 
+        # but to be safe and use schemas, we can validate.
+        # Since repo returns dictionary list, we can just return it as it matches the schema.
+        response = [
+            GlobalRegistrationResponse(**item)
+            for item in registrations_data["items"]
+        ]
+        
+        return {
+            "items": response,
+            "pagination": registrations_data["pagination"]
+        }
 
     
     async def pending_registrations_reminder(self,event_id,session):

@@ -12,7 +12,25 @@ from schemas.registration import *
 from pydantic import AnyUrl
 from utils.success_response import success_response
 
-admin_router = APIRouter(prefix='/api/v1/admin/events' ,tags=["Admin"])
+admin_router = APIRouter(prefix='/api/v1/admin/events' ,tags=["Admin Events"])
+admin_registrations_router = APIRouter(prefix='/api/v1/admin/registrations' ,tags=["Admin Registrations"])
+
+@admin_registrations_router.get('/', response_model=GlobalRegistrationList)
+async def get_all_registrations_global(
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, le=100),
+    search: str = Query(default=None, max_length=100),
+    event_id: int = Query(default=None),
+    status: str = Query(default=None),
+    session: AsyncSession = Depends(get_db),
+    admin: User = Depends(get_admin)
+):
+    registrations = await registration_service.list_all_registrations(page, limit, search, event_id, status, session)
+    return success_response(
+        data=registrations,
+        message="Registrations Returned Successfully",
+        status_code=200
+    )
 
 @admin_router.get('/')
 async def get_all_events(
