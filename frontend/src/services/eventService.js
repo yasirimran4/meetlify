@@ -17,8 +17,29 @@ export async function fetchAdminEvents({ page = 1, limit = 10, search = '', stat
   return unwrapApiData(response)
 }
 
+export async function fetchUpcomingEvents({ page = 1, limit = 10, search = '' } = {}) {
+  const params = { page, limit }
+  if (search) params.search = search
+
+  const response = await api.get(EVENT_API.upcoming, { params })
+  return unwrapApiData(response)
+}
+
+export async function fetchCompletedEvents({ page = 1, limit = 10, search = '' } = {}) {
+  const params = { page, limit }
+  if (search) params.search = search
+
+  const response = await api.get(EVENT_API.completed, { params })
+  return unwrapApiData(response)
+}
+
 export async function fetchEvent(eventId) {
   const response = await api.get(EVENT_API.single(eventId))
+  return unwrapApiData(response)
+}
+
+export async function registerForEvent(eventId, registrationData) {
+  const response = await api.post(EVENT_API.register(eventId), registrationData)
   return unwrapApiData(response)
 }
 

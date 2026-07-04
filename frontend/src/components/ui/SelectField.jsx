@@ -1,6 +1,6 @@
 import { useId } from 'react'
 
-export default function SelectField({ id, label, value, onChange, options, className = '' }) {
+export default function SelectField({ id, name, label, value, onChange, options, className = '', required }) {
   const generatedId = useId()
   const selectId = id ?? generatedId
 
@@ -13,8 +13,10 @@ export default function SelectField({ id, label, value, onChange, options, class
       ) : null}
       <select
         id={selectId}
+        name={name}
         value={value}
         onChange={onChange}
+        required={required}
         className="h-10 w-full rounded-lg border border-border-input bg-surface px-3 text-sm text-text-primary focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20"
       >
         {options.map((option) => (

@@ -9,11 +9,19 @@ import AdminEventFormPage from './features/admin/pages/AdminEventFormPage'
 import AdminEventDetailsPage from './features/admin/pages/AdminEventDetailsPage'
 import ProtectedRoute from './components/auth/ProtectedRoute'
 import GuestRoute from './components/auth/GuestRoute'
+import PublicLandingPage from './features/public/pages/PublicLandingPage'
+import PublicEventsPage from './features/public/pages/PublicEventsPage'
+import PublicEventDetailsPage from './features/public/pages/PublicEventDetailsPage'
+import PublicEventRegistrationPage from './features/public/pages/PublicEventRegistrationPage'
 import { ADMIN_ROUTES } from './constants/api'
 
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<PublicLandingPage />} />
+      <Route path="/events" element={<PublicEventsPage />} />
+      <Route path="/events/:eventId" element={<PublicEventDetailsPage />} />
+      <Route path="/events/:eventId/register" element={<PublicEventRegistrationPage />} />
       <Route
         path={ADMIN_ROUTES.login}
         element={

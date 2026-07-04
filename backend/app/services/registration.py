@@ -48,12 +48,23 @@ class RegitrationService:
         send_registration_email.delay(
             email=registration.email,
             name=registration.name,
-            event_title=event.title,
-            meeting_link=event.meeting_link,speaker_name=event.speaker_name,
-            event_date_time=event.event_date_time
+            event_title=event.get("title", ""),
+            meeting_link=event.get("meeting_link", ""),
+            speaker_name=event.get("speaker_name", ""),
+            event_date_time=event.get("event_date_time", "")
         )
 
-        return registration_response
+        return {
+            "id": registration_response.id,
+            "name": registration_response.name,
+            "email": registration_response.email,
+            "current_role": registration_response.current_role,
+            "organization": registration_response.organization,
+            "semester": registration_response.semester,
+            "reminder_sent": registration_response.reminder_sent,
+            "event_id": registration_response.event_id,
+            "created_at": registration_response.created_at.isoformat() if registration_response.created_at else None
+        }
     
     async def dashboard(self,session):
         total_registrations = await regitration_repo.get_registrations_count(session) 

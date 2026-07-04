@@ -23,6 +23,7 @@ export const EVENT_API = {
   upcoming: '/api/v1/events/upcoming',
   completed: '/api/v1/events/completed',
   single: (eventId) => `/api/v1/events/${eventId}`,
+  register: (eventId) => `/api/v1/events/${eventId}/register`,
 }
 
 export const STORAGE_KEYS = {
