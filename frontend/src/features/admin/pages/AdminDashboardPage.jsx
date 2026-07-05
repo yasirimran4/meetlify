@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import Alert from '../../../components/ui/Alert'
 import Button from '../../../components/ui/Button'
@@ -11,6 +11,7 @@ import { ADMIN_ROUTES } from '../../../constants/api'
 import { useDashboardData } from '../../../hooks/useDashboardData'
 
 export default function AdminDashboardPage() {
+  const navigate = useNavigate()
   const {
     stats,
     upcomingEvents,
@@ -43,10 +44,7 @@ export default function AdminDashboardPage() {
         description="Here is what's happening across your events today."
         actions={
           <>
-            <Button variant="outline" fullWidth={false} className="px-4" disabled>
-              View Analytics
-            </Button>
-            <Button fullWidth={false} className="px-4" disabled>
+            <Button fullWidth={false} className="px-4" onClick={() => navigate(ADMIN_ROUTES.eventCreate)}>
               <Plus className="h-4 w-4" aria-hidden="true" />
               Create New Event
             </Button>

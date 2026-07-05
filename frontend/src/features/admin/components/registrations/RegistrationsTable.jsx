@@ -20,7 +20,7 @@ export function RegistrationsTable({ registrations }) {
       <table className="min-w-full divide-y divide-border">
         <thead className="bg-surface-subtle">
           <tr>
-            {['Attendee', 'Event', 'Contact', 'Registration Date', 'Status', 'Actions'].map(
+            {['Attendee', 'Event', 'Contact', 'Registration Date', 'Status'].map(
               (heading) => (
                 <th
                   key={heading}
@@ -69,37 +69,7 @@ export function RegistrationsTable({ registrations }) {
                   </span>
                 )}
               </td>
-              <td className="px-5 py-4 text-right">
-                <DropdownMenu
-                  triggerLabel="Registration actions"
-                  items={[
-                    {
-                      key: 'view',
-                      label: 'View Details',
-                      onClick: () => {
-                        alert('View Details feature is not currently available via API.')
-                      },
-                    },
-                    {
-                      key: 'update',
-                      label: 'Update Status',
-                      onClick: () => {
-                        alert('Update Status feature is not currently available via API.')
-                      },
-                      disabled: true,
-                    },
-                    {
-                      key: 'delete',
-                      label: 'Delete',
-                      onClick: () => {
-                         alert('Delete feature is not currently available via API.')
-                      },
-                      destructive: true,
-                      disabled: true,
-                    },
-                  ]}
-                />
-              </td>
+
             </tr>
           ))}
         </tbody>

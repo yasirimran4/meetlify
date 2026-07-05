@@ -78,49 +78,49 @@ export function EventsTable({
                     : formatNumber(registrationCounts[event.id])}
                 </td>
                 <td className="px-5 py-4">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <Button
                       variant="outline"
                       fullWidth={false}
-                      className="h-8 w-8 p-0"
+                      className="h-8 px-3 text-xs"
                       onClick={() => onView(event)}
                       title="View Details"
                     >
-                      <Eye className="h-4 w-4" aria-hidden="true" />
-                      <span className="sr-only">View</span>
+                      <Eye className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      View
                     </Button>
                     <Button
                       variant="outline"
                       fullWidth={false}
-                      className="h-8 w-8 p-0"
+                      className="h-8 px-3 text-xs"
                       onClick={() => onEdit(event)}
                       disabled={isCompleted}
                       title="Edit Event"
                     >
-                      <Pencil className="h-4 w-4" aria-hidden="true" />
-                      <span className="sr-only">Edit</span>
+                      <Pencil className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      Edit
                     </Button>
                     <Button
                       variant="outline"
                       fullWidth={false}
-                      className="h-8 w-8 p-0"
+                      className="h-8 px-3 text-xs"
                       onClick={() => onPublish(event)}
                       disabled={!isDraft}
                       title={isDraft ? "Publish Event" : "Already Published"}
                     >
-                      <UploadCloud className="h-4 w-4" aria-hidden="true" />
-                      <span className="sr-only">Publish</span>
+                      <UploadCloud className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      Publish
                     </Button>
                     <Button
                       variant="outline"
                       fullWidth={false}
-                      className="h-8 w-8 p-0 text-error hover:bg-error-muted hover:text-error hover:border-error-border"
+                      className="h-8 px-3 text-xs text-error hover:bg-error-muted hover:text-error hover:border-error-border"
                       onClick={() => onDelete(event)}
                       disabled={isCompleted}
                       title="Delete Event"
                     >
-                      <Trash2 className="h-4 w-4" aria-hidden="true" />
-                      <span className="sr-only">Delete</span>
+                      <Trash2 className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      Delete
                     </Button>
                   </div>
                 </td>
