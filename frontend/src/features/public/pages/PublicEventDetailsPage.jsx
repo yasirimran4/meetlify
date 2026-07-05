@@ -137,12 +137,26 @@ export default function PublicEventDetailsPage() {
                   </div>
                   <div>
                     <dt className="text-text-muted flex items-center gap-2 mb-1">
-                      <MapPin className="h-4 w-4" /> Location
+                      <MapPin className="h-4 w-4" /> Meeting Link
                     </dt>
                     <dd className="font-medium text-text-primary pl-6">
-                      {isCompleted ? 'Completed' : 'Online / Meeting Link provided upon registration'}
+                      <a href={event.meeting_link} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
+                        {event.meeting_link}
+                      </a>
                     </dd>
                   </div>
+                  {isCompleted && event.video_url && (
+                    <div>
+                      <dt className="text-text-muted flex items-center gap-2 mb-1">
+                        <PlayCircle className="h-4 w-4" /> Recording Link
+                      </dt>
+                      <dd className="font-medium text-text-primary pl-6">
+                        <a href={event.video_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline break-all">
+                          {event.video_url}
+                        </a>
+                      </dd>
+                    </div>
+                  )}
                 </dl>
               </section>
             </div>
