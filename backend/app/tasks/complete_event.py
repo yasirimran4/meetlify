@@ -12,7 +12,7 @@ async def complete_events():
     bind=True,
     max_retries=3
 )
-def complete_expired_events():
+def complete_expired_events(self):
     print("Complete Event Called")
     asyncio.run(complete_events())
 
