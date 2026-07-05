@@ -1,31 +1,38 @@
+import asyncio
+import logging
 
 from core.celery_app import celery_app
 from services.email_service import email_service
-import asyncio
 from services.template_service import render_template
 
-@celery_app.task(
-    bind=True,
-    max_retries=3
-)
-def send_registration_email(self,email:str,name:str,event_title:str,meeting_link,speaker_name:str,event_date_time):
-    formatted_date = event_date_time.strftime(
-    "%d %B %Y, %I:%M %p"
+logger = logging.getLogger(__name__)
+
+
+@celery_app.task(bind=True, name="tasks.email_task.send_registration_email", max_retries=3)
+def send_registration_email(self, email: str, name: str, event_title: str, meeting_link, speaker_name: str, event_date_time):
+    formatted_date = event_date_time.strftime("%d %B %Y, %I:%M %p")
+    html = render_template(
+        "templates/emails/registration.html",
+        {
+            "attendee_name": name,
+            "event_title": event_title,
+            "meeting_link": meeting_link,
+            "speaker_name": speaker_name,
+            "event_date": formatted_date,
+        },
     )
-    html = render_template("templates/emails/registration.html",{"attendee_name" : name,"event_title" : event_title,"meeting_link":meeting_link,"speaker_name":speaker_name,"event_date" : formatted_date})
     subject = f"Registration Confirmation for {event_title}"
 
     try:
         asyncio.run(
             email_service.send_email(
                 email_to=email,
-                subject=subject,      # Celery is sync but email service is Async
-                body=html
+                subject=subject,
+                body=html,
             )
         )
-
-    except Exception as e:
-        raise self.retry(exc=e,countdown=60)
-
+    except Exception as exc:
+        logger.exception("Failed to send registration email")
+        raise self.retry(exc=exc, countdown=60) from exc
 
 
