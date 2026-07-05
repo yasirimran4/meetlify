@@ -13,6 +13,7 @@ import PublicLandingPage from './features/public/pages/PublicLandingPage'
 import PublicEventsPage from './features/public/pages/PublicEventsPage'
 import PublicEventDetailsPage from './features/public/pages/PublicEventDetailsPage'
 import PublicEventRegistrationPage from './features/public/pages/PublicEventRegistrationPage'
+import NotFound from './components/ui/NotFound'
 import { ADMIN_ROUTES } from './constants/api'
 
 function App() {
@@ -48,8 +49,7 @@ function App() {
         <Route path="profile" element={<AdminPlaceholderPage title="Profile" />} />
       </Route>
 
-      <Route path="/" element={<Navigate to={ADMIN_ROUTES.login} replace />} />
-      <Route path="*" element={<Navigate to={ADMIN_ROUTES.login} replace />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   )
 }
