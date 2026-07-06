@@ -241,7 +241,7 @@ export default function PublicEventRegistrationPage() {
                     </div>
                     
                     <div className="pt-6 border-t border-border">
-                      <Button type="submit" size="lg" className="w-full py-4" isLoading={isSubmitting}>
+                      <Button type="submit" size="lg" className="w-full py-2" isLoading={isSubmitting}>
                         Confirm Registration
                       </Button>
                     </div>
