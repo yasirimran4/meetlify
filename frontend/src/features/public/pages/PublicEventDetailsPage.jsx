@@ -131,7 +131,13 @@ export default function PublicEventDetailsPage() {
                   </div>
                   <div>
                     <dt className="text-text-muted flex items-center gap-2 mb-1">
-                      <User className="h-4 w-4" /> Organizer / Speaker
+                      <User className="h-4 w-4" /> Organizer
+                    </dt>
+                    <dd className="font-medium text-text-primary pl-6">Dr. Zobia Suhail</dd>
+                  </div>
+                  <div>
+                    <dt className="text-text-muted flex items-center gap-2 mb-1">
+                      <User className="h-4 w-4" /> Speaker
                     </dt>
                     <dd className="font-medium text-text-primary pl-6">{event.speaker_name}</dd>
                   </div>
