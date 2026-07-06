@@ -241,12 +241,9 @@ export default function PublicEventRegistrationPage() {
                     </div>
                     
                     <div className="pt-6 border-t border-border">
-                      <Button type="submit" size="lg" className="w-full" isLoading={isSubmitting}>
+                      <Button type="submit" size="lg" className="w-full py-4" isLoading={isSubmitting}>
                         Confirm Registration
                       </Button>
-                      <p className="mt-4 text-center text-sm text-text-muted">
-                        By registering, you agree to our terms of service and privacy policy.
-                      </p>
                     </div>
                   </form>
                 </>
