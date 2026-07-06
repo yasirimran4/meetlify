@@ -15,14 +15,14 @@ export default function PublicEventCard({ event, isPast }) {
           <img
             src={event.thumbnail_url}
             alt={event.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105 shadow-sm"
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-surface-subtle">
             <CalendarDays className="h-12 w-12 text-text-muted" />
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+        {/* removed dark gradient overlay to preserve thumbnail colors */}
         <div className="absolute bottom-4 left-4 right-4 flex items-center justify-end">
           {hasRecording && (
             <Badge variant="success" className="gap-1 shadow-sm">
