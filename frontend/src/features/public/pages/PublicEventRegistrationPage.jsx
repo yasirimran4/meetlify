@@ -167,7 +167,7 @@ export default function PublicEventRegistrationPage() {
                           onChange={handleChange}
                           required
                           minLength={3}
-                          placeholder="John Doe"
+                          placeholder="Yasir Imran"
                         />
                       </div>
                       
@@ -180,7 +180,7 @@ export default function PublicEventRegistrationPage() {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          placeholder="john@example.com"
+                          placeholder="yasir@example.com"
                         />
                       </div>
                     </div>
@@ -212,7 +212,7 @@ export default function PublicEventRegistrationPage() {
                           name="organization"
                           value={formData.organization}
                           onChange={handleChange}
-                          placeholder="e.g. Acme Corp"
+                          placeholder="e.g. PUCIT"
                         />
                       </div>
                     </div>
