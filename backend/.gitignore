@@ -57,7 +57,7 @@ logs/
 docker-compose.override.yml
 
 # Celery Beat
-celerybeat-schedule
+backend/app/celerybeat-schedule
 
 CONTEXT.md
 CURSOR_LIGHT_CONTEXT.md
