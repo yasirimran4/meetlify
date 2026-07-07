@@ -31,6 +31,7 @@ def send_registration_email(self, email: str, name: str, event_title: str, meeti
                 body=html,
             )
         )
+        
     except Exception as exc:
         logger.exception("Failed to send registration email")
         raise self.retry(exc=exc, countdown=60) from exc
