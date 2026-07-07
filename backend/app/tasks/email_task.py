@@ -1,5 +1,6 @@
 import asyncio
 import logging
+from datetime import datetime
 
 from core.celery_app import celery_app
 from services.email_service import email_service
@@ -10,7 +11,11 @@ logger = logging.getLogger(__name__)
 
 @celery_app.task(bind=True, name="tasks.email_task.send_registration_email", max_retries=3)
 def send_registration_email(self, email: str, name: str, event_title: str, meeting_link, speaker_name: str, event_date_time):
-    formatted_date = event_date_time.strftime("%d %B %Y, %I:%M %p")
+    event_datetime = event_date_time
+    if isinstance(event_datetime, str):
+        event_datetime = datetime.fromisoformat(event_datetime)
+
+    formatted_date = event_datetime.strftime("%d %B %Y, %I:%M %p")
     html = render_template(
         "templates/emails/registration.html",
         {
@@ -31,7 +36,7 @@ def send_registration_email(self, email: str, name: str, event_title: str, meeti
                 body=html,
             )
         )
-        
+
     except Exception as exc:
         logger.exception("Failed to send registration email")
         raise self.retry(exc=exc, countdown=60) from exc

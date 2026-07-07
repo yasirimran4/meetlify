@@ -45,13 +45,17 @@ class RegitrationService:
  
         registration_response = await regitration_repo.register_event(registration,session)
 
+        event_date_time = event.get("event_date_time", "")
+        if hasattr(event_date_time, "isoformat"):
+            event_date_time = event_date_time.isoformat()
+
         send_registration_email.delay(
             email=registration.email,
             name=registration.name,
             event_title=event.get("title", ""),
             meeting_link=event.get("meeting_link", ""),
             speaker_name=event.get("speaker_name", ""),
-            event_date_time=event.get("event_date_time", "")
+            event_date_time=event_date_time
         )
 
         return {
