@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { CalendarDays, MapPin, User, PlayCircle, Clock, ArrowRight } from 'lucide-react'
+import { CalendarDays, MapPin, User, PlayCircle, Clock, ArrowRight, ExternalLink } from 'lucide-react'
 import PublicNavbar from '../components/PublicNavbar'
 import PublicFooter from '../components/PublicFooter'
 import { Link } from 'react-router-dom'
@@ -71,7 +71,7 @@ export default function PublicEventDetailsPage() {
                 </div>
               </div>
 
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 {isCompleted ? (
                   hasRecording ? (
                     <a href={event.video_url} target="_blank" rel="noopener noreferrer">
@@ -87,7 +87,7 @@ export default function PublicEventDetailsPage() {
                   )
                 ) : (
                   <Link to={`/events/${eventId}/register`} className="w-full sm:w-auto block">
-                    <button className="w-full sm:w-auto px-8 py-4 text-base font-bold text-white bg-gradient-to-r from-primary to-primary-hover rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group">
+                    <button className="w-full sm:w-auto px-8 py-4 text-base font-bold text-white bg-linear-to-r from-primary to-primary-hover rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex items-center justify-center gap-2 group">
                       Register Now
                       <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </button>
@@ -120,6 +120,28 @@ export default function PublicEventDetailsPage() {
 
             {/* Sidebar */}
             <div className="space-y-8">
+              {!isCompleted && event.meeting_link && (
+                <section className="rounded-xl border border-primary/20 bg-linear-to-br from-primary/10 to-primary/5 p-6 shadow-sm">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+                    <PlayCircle className="h-4 w-4" />
+                    Live Session
+                  </div>
+                  <h3 className="mt-3 text-lg font-semibold text-text-primary">Join the meeting</h3>
+                  <p className="mt-2 text-sm text-text-secondary">
+                    Open the live session instantly from this page when the event begins.
+                  </p>
+                  <a
+                    href={event.meeting_link}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-all duration-200 hover:bg-primary-hover hover:shadow-md"
+                  >
+                    Join Meeting
+                    <ExternalLink className="h-4 w-4" />
+                  </a>
+                </section>
+              )}
+
               <section className="bg-surface-muted rounded-xl p-6 border border-border">
                 <h3 className="font-bold text-text-primary mb-4">Event Details</h3>
                 <dl className="space-y-4 text-sm">
