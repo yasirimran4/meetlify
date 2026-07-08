@@ -58,8 +58,3 @@ docker-compose.override.yml
 
 # Celery Beat
 backend/app/celerybeat-schedule
-
-CONTEXT.md
-CURSOR_LIGHT_CONTEXT.md
-DESIGN_SYSTEM.md
-WORKFLOW.md
