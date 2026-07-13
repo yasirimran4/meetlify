@@ -22,7 +22,7 @@ export function RegistrationsTable({ registrations }) {
       <table className="min-w-full divide-y divide-border">
         <thead className="bg-surface-subtle">
           <tr>
-            {['Attendee', 'Event', 'Contact', 'Registration Date', 'Status'].map(
+            {['Attendee', 'Event', 'Contact', 'Semester', 'Registration Date', 'Status'].map(
               (heading) => (
                 <th
                   key={heading}
@@ -55,6 +55,9 @@ export function RegistrationsTable({ registrations }) {
                     {reg.email}
                   </a>
                 </div>
+              </td>
+              <td className="px-5 py-4 text-sm text-text-secondary">
+                {reg.semester || '—'}
               </td>
               <td className="px-5 py-4 text-sm whitespace-nowrap text-text-secondary">
                 {formatEventDate(reg.created_at ?? reg.createdAt)}

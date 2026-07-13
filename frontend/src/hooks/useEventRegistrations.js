@@ -29,8 +29,8 @@ export function useEventRegistrations(eventId) {
 
     try {
       const response = await fetchEventRegistrations(eventId, { page, limit: pageSize })
-      const items = normalizeRegistrations(response?.items ?? [])
-      const pageData = response?.pagination ?? {}
+      const items = normalizeRegistrations(response)
+      const pageData = response?.pagination ?? response?.data?.pagination ?? {}
 
       const totalItems = pageData.total_items ?? 0
       const currentPage = pageData.page ?? page

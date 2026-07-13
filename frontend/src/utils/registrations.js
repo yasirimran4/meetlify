@@ -31,9 +31,13 @@ export function normalizeRegistrations(payload) {
   if (payload && typeof payload === 'object') {
     const items = Array.isArray(payload.items)
       ? payload.items
-      : Array.isArray(payload.data?.items)
-        ? payload.data.items
-        : []
+      : Array.isArray(payload.data)
+        ? payload.data
+        : Array.isArray(payload.data?.items)
+          ? payload.data.items
+          : Array.isArray(payload.registrations)
+            ? payload.registrations
+            : []
 
     return items.map(normalizeRegistration).filter(Boolean)
   }

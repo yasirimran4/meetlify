@@ -47,6 +47,8 @@ export default function EventRegistrationsTab({
     )
   }
 
+  const safeRegistrations = Array.isArray(registrations) ? registrations : []
+
   return (
     <Card>
       <div className="border-b border-border p-4 sm:p-5">
@@ -63,7 +65,7 @@ export default function EventRegistrationsTab({
         ) : null}
       </div>
 
-      {registrations.length === 0 ? (
+      {safeRegistrations.length === 0 ? (
         <div className="p-6">
           <EmptyState
             title="No registrations found"
@@ -79,7 +81,7 @@ export default function EventRegistrationsTab({
           <table className="min-w-full divide-y divide-border">
             <thead className="bg-surface-subtle">
               <tr>
-                {['Attendee', 'Organization', 'Role', 'Status', 'Registered'].map((heading) => (
+                {['Attendee', 'Organization', 'Role', 'Semester', 'Status', 'Registered'].map((heading) => (
                   <th
                     key={heading}
                     scope="col"
@@ -91,7 +93,7 @@ export default function EventRegistrationsTab({
               </tr>
             </thead>
             <tbody className="divide-y divide-border bg-surface">
-              {registrations.map((registration) => (
+              {safeRegistrations.map((registration) => (
                 <tr key={registration.id} className="hover:bg-surface-muted/60">
                   <td className="px-5 py-4">
                     <p className="font-medium text-text-primary">{registration.name}</p>
@@ -102,6 +104,9 @@ export default function EventRegistrationsTab({
                   </td>
                   <td className="px-5 py-4 text-sm text-text-secondary">
                     {registration.currentRole}
+                  </td>
+                  <td className="px-5 py-4 text-sm text-text-secondary">
+                    {registration.semester || '—'}
                   </td>
                   <td className="px-5 py-4">
                     <RegistrationStatusBadge reminderSent={registration.reminderSent} />
