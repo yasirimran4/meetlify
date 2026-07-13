@@ -4,7 +4,9 @@ import EmptyState from '../../../../components/ui/EmptyState'
 import { formatEventDate } from '../../../../utils/format'
 
 export function RegistrationsTable({ registrations }) {
-  if (!registrations || registrations.length === 0) {
+  const safeRegistrations = Array.isArray(registrations) ? registrations : []
+
+  if (safeRegistrations.length === 0) {
     return (
       <div className="p-6">
         <EmptyState
@@ -34,14 +36,14 @@ export function RegistrationsTable({ registrations }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border bg-surface">
-          {registrations.map((reg) => (
+          {safeRegistrations.map((reg) => (
             <tr key={reg.id} className="hover:bg-surface-muted/60 transition-colors group">
               <td className="px-5 py-4">
                 <p className="font-semibold text-text-primary">{reg.name}</p>
-                <p className="mt-1 text-xs text-text-secondary">{reg.current_role}</p>
+                <p className="mt-1 text-xs text-text-secondary">{reg.current_role ?? reg.currentRole}</p>
               </td>
               <td className="px-5 py-4">
-                <p className="text-sm text-text-primary">{reg.event_title || 'N/A'}</p>
+                <p className="text-sm text-text-primary">{(reg.event_title ?? reg.eventTitle) || 'N/A'}</p>
               </td>
               <td className="px-5 py-4">
                 <div className="flex items-center gap-1.5 text-sm text-text-secondary">
@@ -55,10 +57,10 @@ export function RegistrationsTable({ registrations }) {
                 </div>
               </td>
               <td className="px-5 py-4 text-sm whitespace-nowrap text-text-secondary">
-                {formatEventDate(reg.created_at)}
+                {formatEventDate(reg.created_at ?? reg.createdAt)}
               </td>
               <td className="px-5 py-4">
-                {reg.reminder_sent ? (
+                {reg.reminder_sent ?? reg.reminderSent ? (
                   <span className="inline-flex items-center gap-1 rounded-md bg-success-muted/20 px-2 py-1 text-xs font-medium text-success-text ring-1 ring-inset ring-success-border/20">
                     <Check className="h-3 w-3" aria-hidden="true" />
                     Reminder Sent
