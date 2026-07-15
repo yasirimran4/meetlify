@@ -113,6 +113,15 @@ async def publish_event(event_id:int,session: AsyncSession = Depends(get_db),adm
         status_code=200
     )
 
+@admin_router.patch('/{event_id}/complete')  #  Protected Route
+async def complete_event(event_id:int,session: AsyncSession = Depends(get_db),admin:User = Depends(get_admin)):
+    event = await event_service.complete_event(session,event_id)
+    return success_response(
+        data=event,
+        message="Event marked as completed successfully",
+        status_code=200
+    )
+
 @admin_router.get('/{event_id}/registrations',response_model = RegistrationList )    # Protected Route
 async def list_registrations(event_id : int,session: AsyncSession = Depends(get_db),page : int = Query(default=1, ge=1),limit : int = Query(default=10, le=100),admin:User = Depends(get_admin)):
     registrations =  await event_service.list_registrations(event_id,page,limit,session)
