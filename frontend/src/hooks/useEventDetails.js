@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import {
+  completeEvent,
   deleteEvent,
   fetchEvent,
   fetchEventAnalytics,
@@ -17,6 +18,7 @@ export function useEventDetails(eventId) {
   const [actionError, setActionError] = useState(null)
   const [actionMessage, setActionMessage] = useState(null)
   const [isPublishing, setIsPublishing] = useState(false)
+  const [isCompleting, setIsCompleting] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [isSavingRecording, setIsSavingRecording] = useState(false)
 
@@ -59,6 +61,25 @@ export function useEventDetails(eventId) {
       setActionError(parseApiError(publishError).message)
     } finally {
       setIsPublishing(false)
+    }
+  }, [eventId, loadEventDetails])
+
+  const handleComplete = useCallback(async () => {
+    setActionError(null)
+    setActionMessage(null)
+    setIsCompleting(true)
+
+    try {
+      const updatedEvent = await completeEvent(eventId)
+      setEvent(normalizeEvent(updatedEvent))
+      setActionMessage('Event marked as completed successfully.')
+      await loadEventDetails()
+      return true
+    } catch (completeError) {
+      setActionError(parseApiError(completeError).message)
+      return false
+    } finally {
+      setIsCompleting(false)
     }
   }, [eventId, loadEventDetails])
 
@@ -107,10 +128,12 @@ export function useEventDetails(eventId) {
     actionError,
     actionMessage,
     isPublishing,
+    isCompleting,
     isDeleting,
     isSavingRecording,
     reload: loadEventDetails,
     publishEvent: handlePublish,
+    completeEvent: handleComplete,
     deleteEvent: handleDelete,
     saveRecording: handleSaveRecording,
     clearActionFeedback: () => {

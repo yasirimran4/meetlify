@@ -23,26 +23,39 @@ export function normalizeRegistration(raw) {
   }
 }
 
-export function normalizeRegistrations(payload) {
+function extractRegistrationsArray(payload) {
   if (Array.isArray(payload)) {
-    return payload.map(normalizeRegistration).filter(Boolean)
+    return payload
   }
 
-  if (payload && typeof payload === 'object') {
-    const items = Array.isArray(payload.items)
-      ? payload.items
-      : Array.isArray(payload.data)
-        ? payload.data
-        : Array.isArray(payload.data?.items)
-          ? payload.data.items
-          : Array.isArray(payload.registrations)
-            ? payload.registrations
-            : []
+  if (!payload || typeof payload !== 'object') {
+    return []
+  }
 
-    return items.map(normalizeRegistration).filter(Boolean)
+  if (Array.isArray(payload.items)) return payload.items
+  if (Array.isArray(payload.registrations)) return payload.registrations
+  if (Array.isArray(payload.data)) return payload.data
+  if (Array.isArray(payload.data?.items)) return payload.data.items
+  if (Array.isArray(payload.data?.registrations)) return payload.data.registrations
+
+  if (payload.data && typeof payload.data === 'object') {
+    return extractRegistrationsArray(payload.data)
   }
 
   return []
+}
+
+export function extractPagination(payload) {
+  if (!payload || typeof payload !== 'object') {
+    return null
+  }
+
+  return payload.pagination ?? payload.data?.pagination ?? null
+}
+
+export function normalizeRegistrations(payload) {
+  const items = extractRegistrationsArray(payload)
+  return items.map(normalizeRegistration).filter(Boolean)
 }
 
 export function filterRegistrations(registrations, query) {

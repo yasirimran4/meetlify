@@ -46,3 +46,18 @@ class InvalidFormat(AppException):
             error_code=error_code,
             status_code=status_code,
         )
+
+
+class EventCannotBeCompletedError(AppException):
+
+    def __init__(
+        self,
+        message: str = "Only published events that have already ended can be marked completed.",
+        error_code: str = "EVENT_CANNOT_BE_COMPLETED",
+        status_code: int = 400,
+    ):
+        super().__init__(
+            message=message,
+            error_code=error_code,
+            status_code=status_code,
+        )

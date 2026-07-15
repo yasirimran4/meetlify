@@ -105,6 +105,15 @@ class EventRepository:
             logger.exception("DB Error. Event not returned..") 
             raise
 
+    async def complete_event(self,session,event_id):
+        try:
+            event = await session.execute(update(Event).where(Event.id == event_id).values(status = Status.COMPLETED).returning(Event))
+            await session.commit()
+            return event.scalar_one_or_none()
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..") 
+            raise
+
     async def get_all_registrations_by_event_id(self,event_id,session):
         try:
             registrations = await session.execute(select(Registration).where(Registration.event_id == event_id))

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchEventRegistrations } from '../services/eventService'
 import { PAGE_SIZE_OPTIONS } from '../constants/events'
 import { parseApiError } from '../utils/apiError'
-import { filterRegistrations, normalizeRegistrations } from '../utils/registrations'
+import { extractPagination, filterRegistrations, normalizeRegistrations } from '../utils/registrations'
 
 export function useEventRegistrations(eventId) {
   const [registrations, setRegistrations] = useState([])
@@ -30,7 +30,7 @@ export function useEventRegistrations(eventId) {
     try {
       const response = await fetchEventRegistrations(eventId, { page, limit: pageSize })
       const items = normalizeRegistrations(response)
-      const pageData = response?.pagination ?? response?.data?.pagination ?? {}
+      const pageData = extractPagination(response) ?? {}
 
       const totalItems = pageData.total_items ?? 0
       const currentPage = pageData.page ?? page
