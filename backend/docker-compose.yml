@@ -10,23 +10,24 @@ services:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000
 
-  worker:
-    build: .
-    container_name: meetlify_worker
-    volumes:
-      - ./app:/app
-    env_file:
-      - .env
-    command: celery -A core.celery_app.celery_app worker --pool=solo --loglevel=info
+  # worker:
+  #   build: .
+  #   container_name: meetlify_worker
+  #   volumes:
+  #     - ./app:/app
+  #   env_file:
+  #     - .env
+  #   command: celery -A core.celery_app.celery_app worker --pool=solo --loglevel=info
 
-  beat:
-    build: .
-    container_name: meetlify_beat
-    volumes:
-      - ./app:/app
-    env_file:
-      - .env
-    depends_on:
-      - worker
-    command: celery -A core.celery_app.celery_app beat --loglevel=info
+  # beat:
+  #   build: .
+  #   container_name: meetlify_beat
+  #   volumes:
+  #     - ./app:/app
+  #   env_file:
+  #     - .env
+  #   depends_on:
+  #     - worker
+  #   command: celery -A core.celery_app.celery_app beat --loglevel=info
 
+  #  Using n8n email service for now Date : 19-July-2026

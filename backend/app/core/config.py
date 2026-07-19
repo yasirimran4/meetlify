@@ -17,11 +17,6 @@ class Setting(BaseSettings):
     CLOUDINARY_API_KEY: str | None = None
     CLOUDINARY_API_SECRET: str | None = None
     REDIS_URL: str = "redis://localhost:6379/0"
-    SMTP_HOST: str = "localhost"
-    SMTP_PORT: str = "1025"
-    SMTP_USERNAME: str = ""
-    SMTP_PASSWORD: str = ""
-    EMAIL_FROM: str = "noreply@example.com"
     ALLOWED_ORIGINS: str = "*"
 
     model_config = SettingsConfigDict(

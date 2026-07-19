@@ -1,5 +1,5 @@
 from exceptions.event import EventNotFoundError
-from tasks.email_task import send_registration_email
+# from tasks.email_task import send_registration_email      Using n8n email service for now Date : 19-July-2026
 from models.registration import Registration
 from repositories.registration import regitration_repo
 from .event import event_service
@@ -49,14 +49,14 @@ class RegitrationService:
         if hasattr(event_date_time, "isoformat"):
             event_date_time = event_date_time.isoformat()
 
-        send_registration_email.delay(
-            email=registration.email,
-            name=registration.name,
-            event_title=event.get("title", ""),
-            meeting_link=event.get("meeting_link", ""),
-            speaker_name=event.get("speaker_name", ""),
-            event_date_time=event_date_time
-        )
+        # send_registration_email.delay(
+        #     email=registration.email,
+        #     name=registration.name,
+        #     event_title=event.get("title", ""),
+        #     meeting_link=event.get("meeting_link", ""),
+        #     speaker_name=event.get("speaker_name", ""),
+        #     event_date_time=event_date_time
+        # )
 
         return {
             "id": registration_response.id,

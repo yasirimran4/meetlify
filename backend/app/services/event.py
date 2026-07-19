@@ -12,7 +12,10 @@ from datetime import datetime, timezone
 
 class EventService:
     def _format_event(self, event):
-        if not event: return None
+
+        if not event: 
+            return None
+        
         return {
             "id" : event.id,
             "title": event.title,
