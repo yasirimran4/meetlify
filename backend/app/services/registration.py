@@ -8,7 +8,7 @@ from core.redis import redis_client
 from exceptions.registration import *
 from fastapi import HTTPException
 from schemas.registration import GlobalRegistrationResponse
-
+from .n8n_service import send_email
 
 class RegitrationService:
     async def register_event(self,event_id,request,session):   # Rate limit
@@ -57,6 +57,9 @@ class RegitrationService:
         #     speaker_name=event.get("speaker_name", ""),
         #     event_date_time=event_date_time
         # )
+         
+        res = await send_email({"name" :request.name, "email":request.email})
+        print(res)
 
         return {
             "id": registration_response.id,

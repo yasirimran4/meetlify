@@ -16,6 +16,7 @@ class Setting(BaseSettings):
     CLOUDINARY_CLOUD_NAME: str | None = None
     CLOUDINARY_API_KEY: str | None = None
     CLOUDINARY_API_SECRET: str | None = None
+    N8N_WEBHOOK_URL : str
     REDIS_URL: str = "redis://localhost:6379/0"
     ALLOWED_ORIGINS: str = "*"
 
