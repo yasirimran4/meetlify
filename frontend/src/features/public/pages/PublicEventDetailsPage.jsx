@@ -74,8 +74,11 @@ export default function PublicEventDetailsPage() {
               <div className="shrink-0">
                 {isCompleted ? (
                   hasRecording ? (
-                    <a href={event.video_url} target="_blank" rel="noopener noreferrer">
-                      <Button size="lg" className="w-full sm:w-auto gap-2">
+                    <a href={event.video_url} target="_blank" rel="noopener noreferrer" className="block">
+                      <Button
+                        size="lg"
+                        className="w-full sm:w-auto gap-2 px-7 py-4 text-base font-semibold rounded-full shadow-xl ring-2 ring-red-500/20 bg-gradient-to-r from-red-600 via-red-500 to-red-600 text-white hover:shadow-2xl hover:-translate-y-0.5 transition-all"
+                      >
                         <PlayCircle className="h-5 w-5" />
                         Watch Recording
                       </Button>
@@ -181,8 +184,12 @@ export default function PublicEventDetailsPage() {
                         <PlayCircle className="h-4 w-4" /> Recording
                       </dt>
                       <dd className="font-medium text-text-primary pl-6">
-                        <a href={event.video_url} target="_blank" rel="noopener noreferrer" className="inline-block">
-                          <Button size="sm" variant="secondary" className="inline-flex items-center gap-2">
+                        <a href={event.video_url} target="_blank" rel="noopener noreferrer" className="inline-block mt-2">
+                          <Button
+                            size="sm"
+                            variant="secondary"
+                            className="inline-flex items-center gap-2 rounded-full border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-600 shadow-sm hover:bg-red-100 hover:shadow-md"
+                          >
                             <PlayCircle className="h-4 w-4" />
                             Watch Recording
                           </Button>
