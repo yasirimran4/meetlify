@@ -20,13 +20,18 @@ class CreateEventRequest(BaseModel):
         return value
 
 class EventResponse(BaseModel):
+    id: int
     title: str
     description: str
     speaker_name: str
     meeting_link: AnyUrl
     event_date_time: datetime
+    status: Status
     thumbnail_public_id: str
-    thumbnail_url: AnyUrl
+    thumbnail_url: AnyUrl | None = None
+    video_url: str | None = None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     model_config = {
         "from_attributes": True    # For making dictionary then to store in redis memory

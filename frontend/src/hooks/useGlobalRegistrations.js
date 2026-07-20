@@ -1,12 +1,13 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchAllRegistrations } from '../services/registrationService'
 import { parseApiError } from '../utils/apiError'
+import { extractPagination, normalizeRegistrations } from '../utils/registrations'
 
 export function useGlobalRegistrations(initialParams = { page: 1, limit: 10 }) {
   const [data, setData] = useState({ items: [], pagination: null })
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
-  
+
   const [params, setParams] = useState(initialParams)
 
   const loadRegistrations = useCallback(async (currentParams) => {
@@ -14,7 +15,12 @@ export function useGlobalRegistrations(initialParams = { page: 1, limit: 10 }) {
     setError(null)
     try {
       const response = await fetchAllRegistrations(currentParams)
-      setData(response)
+      const payload = response ?? {}
+
+      setData({
+        items: normalizeRegistrations(payload),
+        pagination: extractPagination(payload),
+      })
     } catch (err) {
       setError(parseApiError(err).message || 'Failed to fetch registrations')
     } finally {

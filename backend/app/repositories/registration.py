@@ -19,7 +19,7 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error.") 
-
+            raise e
     
 
     async def get_registration_by_email(self,event_id,email,session):
@@ -37,8 +37,9 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error.") 
- 
+            raise e
 
+ 
     async def get_registrations_count(self,session):
         try:
             registrations = await session.execute(select(func.count()).select_from(Registration))
@@ -46,6 +47,8 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error") 
+            raise e
+
              
 
     async def mark_reminder_sent(self,registration_id,session):
@@ -55,8 +58,7 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error.") 
-        
-                 
+            raise e
 
     async def get_all_registrations_global(self, page, limit, search, event_id, status, session):
         try:

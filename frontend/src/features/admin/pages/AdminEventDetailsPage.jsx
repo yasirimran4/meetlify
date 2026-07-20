@@ -31,9 +31,11 @@ export default function AdminEventDetailsPage() {
     actionError,
     actionMessage,
     isPublishing,
+    isCompleting,
     isDeleting,
     isSavingRecording,
     publishEvent,
+    completeEvent,
     deleteEvent,
     saveRecording,
   } = useEventDetails(eventId)
@@ -104,8 +106,10 @@ export default function AdminEventDetailsPage() {
         event={event}
         onEdit={() => navigate(ADMIN_ROUTES.eventEdit(eventId))}
         onPublish={publishEvent}
+        onComplete={completeEvent}
         onDelete={() => setShowDeleteDialog(true)}
         isPublishing={isPublishing}
+        isCompleting={isCompleting}
       />
 
       <EventSummaryCards analytics={analytics} event={event} />

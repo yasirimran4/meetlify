@@ -60,6 +60,11 @@ export async function publishEvent(eventId) {
   return unwrapApiData(response)
 }
 
+export async function completeEvent(eventId) {
+  const response = await api.patch(ADMIN_API.completeEvent(eventId))
+  return unwrapApiData(response)
+}
+
 export async function uploadRecordingUrl(eventId, videoUrl) {
   const response = await api.patch(ADMIN_API.uploadVideoUrl(eventId), null, {
     params: { video_url: videoUrl },

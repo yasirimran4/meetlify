@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, CheckCircle, CalendarDays, MapPin } from 'lucide-react'
+import { ArrowLeft, ArrowRight, CheckCircle, CalendarDays, MapPin } from 'lucide-react'
 import PublicNavbar from '../components/PublicNavbar'
 import PublicFooter from '../components/PublicFooter'
 import { usePublicEvent } from '../../../hooks/usePublicEvent'
@@ -141,10 +141,15 @@ export default function PublicEventRegistrationPage() {
                   </div>
                   <h2 className="text-3xl font-bold text-text-primary mb-4">Registration Successful!</h2>
                   <p className="text-lg text-text-secondary mb-10 max-w-md mx-auto">
-                    You have successfully registered for <strong>{event.title}</strong>. We've sent the details and meeting link to <strong>{formData.email}</strong>.
+                    You have successfully registered for <strong>{event.title}</strong>. We will send the event details and meeting link to your registered email one day before the event.
                   </p>
-                  <Button size="lg" onClick={() => navigate('/events')} className="w-full sm:w-auto">
-                    Explore More Events
+                  <Button
+                    size="lg"
+                    onClick={() => navigate('/events')}
+                    className="group w-full sm:w-auto rounded-full px-6 py-3 bg-primary text-white hover:bg-primary/90 transition-all duration-200 cursor-pointer shadow-sm hover:shadow-md inline-flex items-center justify-center gap-2"
+                  >
+                    Explore Events
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                   </Button>
                 </div>
               ) : (

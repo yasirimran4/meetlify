@@ -1,4 +1,4 @@
-from exceptions.event import InvalidFormat , EventNotFoundError
+from exceptions.event import InvalidFormat , EventNotFoundError, EventCannotBeCompletedError
 from models.event import Event, Status
 from repositories.event import event_repo
 from services.cloudinary_service import cloudinary_service
@@ -8,10 +8,14 @@ from schemas.event import *
 import json
 from core.redis import redis_client
 import math
+from datetime import datetime, timezone
 
 class EventService:
     def _format_event(self, event):
-        if not event: return None
+
+        if not event: 
+            return None
+        
         return {
             "id" : event.id,
             "title": event.title,
@@ -159,6 +163,22 @@ class EventService:
         event = await event_repo.publish_event(session,event_id)
         await self._clear_event_caches(event_id)
         return self._format_event(event)
+
+    async def complete_event(self,session,event_id):
+        event = await event_repo.get_single_event(session,event_id)
+
+        if event is None:
+            raise EventNotFoundError()
+
+        if event.status != Status.PUBLISHED:
+            raise EventCannotBeCompletedError("Only published events can be marked completed.")
+
+        if event.event_date_time and event.event_date_time > datetime.now(timezone.utc):
+            raise EventCannotBeCompletedError("Only events that have already ended can be marked completed.")
+
+        updated_event = await event_repo.complete_event(session,event_id)
+        await self._clear_event_caches(event_id)
+        return self._format_event(updated_event)
 
     async def list_registrations(self,event_id,page,limit,session):
         event = await self.get_single_event(session,event_id)

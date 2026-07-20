@@ -11,6 +11,7 @@ export const ADMIN_API = {
   eventRegistrations: (eventId) => `/api/v1/admin/events/${eventId}/registrations`,
   eventAnalytics: (eventId) => `/api/v1/admin/events/${eventId}/analytics`,
   publishEvent: (eventId) => `/api/v1/admin/events/${eventId}/publish`,
+  completeEvent: (eventId) => `/api/v1/admin/events/${eventId}/complete`,
   uploadVideoUrl: (eventId) => `/api/v1/admin/events/${eventId}/upload-video-url`,
   deleteEvent: (eventId) => `/api/v1/admin/events/${eventId}`,
   createEvent: '/api/v1/admin/events',
