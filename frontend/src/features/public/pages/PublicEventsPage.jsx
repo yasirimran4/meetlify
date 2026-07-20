@@ -25,7 +25,13 @@ export default function PublicEventsPage() {
     try {
       const fetcher = tab === 'upcoming' ? fetchUpcomingEvents : fetchCompletedEvents
       const response = await fetcher({ page, limit: 12, search })
-      setEvents(response?.items || [])
+        // Strip status from public-facing event objects so status is not shown
+        const items = (response?.items || []).map((it) => {
+          const copy = { ...it }
+          if (copy.hasOwnProperty('status')) delete copy.status
+          return copy
+        })
+        setEvents(items)
       setPagination(response?.pagination || null)
     } catch (err) {
       setError('Failed to load events. Please try again.')
