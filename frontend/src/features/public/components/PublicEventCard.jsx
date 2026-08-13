@@ -6,6 +6,11 @@ import Badge from '../../../components/ui/Badge'
 
 export default function PublicEventCard({ event, isPast }) {
   const hasRecording = isPast && event.video_url
+  const speakerNames = Array.isArray(event?.speakers) && event.speakers.length > 0
+    ? event.speakers
+    : event?.speaker_name
+      ? [event.speaker_name]
+      : []
 
   return (
     <Link to={`/events/${event.id}`} className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl block h-full">
@@ -44,7 +49,7 @@ export default function PublicEventCard({ event, isPast }) {
           </div>
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 shrink-0 text-text-muted" />
-            <span className="truncate">{event.speaker_name}</span>
+            <span className="truncate">{speakerNames.length > 0 ? speakerNames.join(', ') : '—'}</span>
           </div>
         </div>
       </div>

@@ -38,21 +38,30 @@ export default function PublicEventDetailsPage() {
     )
   }
 
+  const speakerNames = Array.isArray(event.speakers) && event.speakers.length > 0
+    ? event.speakers
+    : event.speaker_name
+      ? [event.speaker_name]
+      : []
+
+  const organizerNames = Array.isArray(event.organizers) && event.organizers.length > 0
+    ? event.organizers
+    : ['Dr. Zobia Suhail']
+
   const isCompleted = event.status === 'completed'
   const hasRecording = isCompleted && event.video_url
 
   return (
     <div className="min-h-screen flex flex-col bg-surface selection:bg-primary/30">
       <PublicNavbar />
-      
+
       <main className="flex-1">
-        {/* Header Section */}
         <div className="bg-surface-muted border-b border-border">
           <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
             <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-8">
               <div className="max-w-2xl">
                 <h1 className="text-4xl font-extrabold tracking-tight text-text-primary sm:text-5xl">{event.title}</h1>
-                
+
                 <div className="mt-8 flex flex-wrap items-center gap-6 text-sm text-text-secondary">
                   <div className="flex items-center gap-2">
                     <CalendarDays className="h-5 w-5 text-text-muted" />
@@ -60,7 +69,7 @@ export default function PublicEventDetailsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <User className="h-5 w-5 text-text-muted" />
-                    <span>{event.speaker_name}</span>
+                    <span>{speakerNames.length > 0 ? speakerNames[0] : '—'}</span>
                   </div>
                   {!isCompleted && (
                     <div className="flex items-center gap-2">
@@ -101,18 +110,15 @@ export default function PublicEventDetailsPage() {
           </div>
         </div>
 
-        {/* Content Section */}
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-            
-            {/* Main Content */}
             <div className="lg:col-span-2 space-y-10">
               {event.thumbnail_url && (
                 <div className="aspect-video w-full overflow-hidden rounded-xl bg-surface-subtle border border-border shadow-sm">
                   <img src={event.thumbnail_url} alt={event.title} className="h-full w-full object-cover" />
                 </div>
               )}
-              
+
               <section>
                 <h2 className="text-2xl font-bold text-text-primary mb-4">Event Overview</h2>
                 <div className="prose prose-slate max-w-none text-text-secondary">
@@ -121,7 +127,6 @@ export default function PublicEventDetailsPage() {
               </section>
             </div>
 
-            {/* Sidebar */}
             <div className="space-y-8">
               {!isCompleted && event.meeting_link && (
                 <section className="rounded-xl border border-primary/20 bg-linear-to-br from-primary/10 to-primary/5 p-6 shadow-sm">
@@ -156,17 +161,29 @@ export default function PublicEventDetailsPage() {
                   </div>
                   <div>
                     <dt className="text-text-muted flex items-center gap-2 mb-1">
-                      <User className="h-4 w-4" /> Organizer
+                      <User className="h-4 w-4" /> {organizerNames.length > 1 ? 'Organized By' : 'Organized By'}
                     </dt>
-                    <dd className="font-medium text-text-primary pl-6">Dr. Zobia Suhail</dd>
+                    <dd className="font-medium text-text-primary pl-6">
+                      <div className="space-y-1">
+                        {organizerNames.map((name) => (
+                          <div key={name}>{name}</div>
+                        ))}
+                      </div>
+                    </dd>
                   </div>
                   <div>
                     <dt className="text-text-muted flex items-center gap-2 mb-1">
-                      <User className="h-4 w-4" /> Speaker
+                      <User className="h-4 w-4" /> {speakerNames.length > 1 ? 'Speakers' : 'Speaker'}
                     </dt>
-                    <dd className="font-medium text-text-primary pl-6">{event.speaker_name}</dd>
+                    <dd className="font-medium text-text-primary pl-6">
+                      <div className="space-y-1">
+                        {speakerNames.length > 0 ? speakerNames.map((name) => (
+                          <div key={name}>{name}</div>
+                        )) : '—'}
+                      </div>
+                    </dd>
                   </div>
-                  { !isCompleted && event.meeting_link && (
+                  {!isCompleted && event.meeting_link && (
                     <div>
                       <dt className="text-text-muted flex items-center gap-2 mb-1">
                         <MapPin className="h-4 w-4" /> Meeting Link
@@ -200,7 +217,6 @@ export default function PublicEventDetailsPage() {
                 </dl>
               </section>
             </div>
-
           </div>
         </div>
       </main>

@@ -49,11 +49,12 @@ export default function AdminEventFormPage() {
         thumbnailPublicId = uploadRes.public_id
       }
 
-      // Prepare payload exactly as CreateEventRequest expects
       const payload = {
         title: formData.title,
         description: formData.description,
-        speaker_name: formData.speakerName,
+        speaker_name: formData.speakers[0] || '',
+        speakers: formData.speakers.filter((name) => name && name.trim()),
+        organizers: formData.organizers.filter((name) => name && name.trim()),
         meeting_link: formData.meetingLink,
         event_date_time: new Date(formData.eventDateTime).toISOString(),
         thumbnail_url: thumbnailUrl,

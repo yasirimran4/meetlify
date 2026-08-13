@@ -47,25 +47,35 @@ export default function RecentEventsTable({ events, registrationCounts }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border bg-surface">
-              {events.map((event) => (
-                <tr key={event.id} className="hover:bg-surface-muted/60">
-                  <td className="px-5 py-4">
-                    <p className="font-medium text-text-primary">{event.title}</p>
-                    <p className="mt-1 text-sm text-text-secondary">{event.speakerName}</p>
-                  </td>
+              {events.map((event) => {
+                const speakerNames = Array.isArray(event?.speakers) && event.speakers.length > 0
+                  ? event.speakers
+                  : event?.speakerName
+                    ? [event.speakerName]
+                    : []
+
+                return (
+                  <tr key={event.id} className="hover:bg-surface-muted/60">
+                    <td className="px-5 py-4">
+                      <p className="font-medium text-text-primary">{event.title}</p>
+                      <p className="mt-1 text-sm text-text-secondary">
+                        {speakerNames.length > 0 ? speakerNames.join(', ') : '—'}
+                      </p>
+                    </td>
                   <td className="px-5 py-4 text-sm text-text-secondary">
                     {formatEventDate(event.eventDateTime)}
                   </td>
                   <td className="px-5 py-4">
                     <Badge status={event.status} />
                   </td>
-                  <td className="px-5 py-4 text-sm text-text-primary">
-                    {registrationCounts[event.id] == null
-                      ? '—'
-                      : formatNumber(registrationCounts[event.id])}
-                  </td>
-                </tr>
-              ))}
+                    <td className="px-5 py-4 text-sm text-text-primary">
+                      {registrationCounts[event.id] == null
+                        ? '—'
+                        : formatNumber(registrationCounts[event.id])}
+                    </td>
+                  </tr>
+                )
+              })}
             </tbody>
           </table>
         </div>

@@ -11,16 +11,40 @@ import math
 from datetime import datetime, timezone
 
 class EventService:
+    def _normalize_name_list(self, value):
+        if value is None:
+            return []
+        if isinstance(value, str):
+            value = [value]
+        cleaned = []
+        for item in value:
+            if item is None:
+                continue
+            name = str(item).strip()
+            if name:
+                cleaned.append(name)
+        return cleaned
+
     def _format_event(self, event):
 
         if not event: 
             return None
-        
+
+        speakers = self._normalize_name_list(getattr(event, "speakers", None))
+        if not speakers and getattr(event, "speaker_name", None):
+            speakers = [str(event.speaker_name).strip()]
+
+        organizers = self._normalize_name_list(getattr(event, "organizers", None))
+        if not organizers:
+            organizers = ["Dr. Zobia Suhail"]
+
         return {
-            "id" : event.id,
+            "id": event.id,
             "title": event.title,
             "description": event.description,
-            "speaker_name": event.speaker_name,
+            "speaker_name": speakers[0] if speakers else "",
+            "speakers": speakers,
+            "organizers": organizers,
             "meeting_link": str(event.meeting_link),
             "event_date_time": str(event.event_date_time),
             "status": event.status,
@@ -28,7 +52,7 @@ class EventService:
             "updated_at": str(event.updated_at),
             "thumbnail_public_id": event.thumbnail_public_id,
             "thumbnail_url": str(event.thumbnail_url),
-            "video_url" : event.video_url
+            "video_url": event.video_url
         }
 
     async def _clear_event_caches(self, event_id=None):
@@ -42,16 +66,20 @@ class EventService:
             await redis_client.delete(*keys)
 
     async def create_event(self,request, session ):
+        speakers = self._normalize_name_list(request.speakers or [request.speaker_name])
+        organizers = self._normalize_name_list(request.organizers) or ["Dr. Zobia Suhail"]
 
         event = Event(
-            title = request.title,
-            description = request.description,
-            speaker_name = request.speaker_name,
-            meeting_link = str(request.meeting_link),
-            event_date_time = request.event_date_time,
-            thumbnail_public_id = request.thumbnail_public_id,
-            thumbnail_url = str(request.thumbnail_url)
-            )
+            title=request.title,
+            description=request.description,
+            speaker_name=speakers[0] if speakers else "",
+            speakers=speakers,
+            organizers=organizers,
+            meeting_link=str(request.meeting_link),
+            event_date_time=request.event_date_time,
+            thumbnail_public_id=request.thumbnail_public_id,
+            thumbnail_url=str(request.thumbnail_url)
+        )
 
         created_event = await event_repo.create_event(event,session=session)
         await self._clear_event_caches()
@@ -124,7 +152,13 @@ class EventService:
         if event is None:
             raise EventNotFoundError()
 
+        speakers = self._normalize_name_list(request.speakers or [request.speaker_name])
+        organizers = self._normalize_name_list(request.organizers) or ["Dr. Zobia Suhail"]
+
         update_data = request.model_dump()
+        update_data["speakers"] = speakers
+        update_data["organizers"] = organizers
+        update_data["speaker_name"] = speakers[0] if speakers else ""
         update_data["thumbnail_url"] = str(update_data["thumbnail_url"])
         update_data["meeting_link"] = str(update_data["meeting_link"])
 
