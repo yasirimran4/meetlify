@@ -69,7 +69,7 @@ export default function PublicEventDetailsPage() {
                   </div>
                   <div className="flex items-center gap-2">
                     <User className="h-5 w-5 text-text-muted" />
-                    <span>{speakerNames.length > 0 ? speakerNames[0] : '—'}</span>
+                    <span>{speakerNames.length > 0 ? speakerNames.join(', ') : '—'}</span>
                   </div>
                   {!isCompleted && (
                     <div className="flex items-center gap-2">
