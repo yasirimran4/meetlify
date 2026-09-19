@@ -1,4 +1,4 @@
-import { LayoutDashboard, CalendarDays, UserRound, Users } from 'lucide-react'
+import { LayoutDashboard, CalendarDays, Users } from 'lucide-react'
 import { ADMIN_ROUTES } from './api'
 import { EVENT_DETAIL_TABS } from './events'
 
@@ -23,13 +23,6 @@ export const ADMIN_NAV_ITEMS = [
     icon: Users,
     end: true,
     description: 'All attendees in one place',
-  },
-  {
-    label: 'Profile',
-    to: ADMIN_ROUTES.profile,
-    icon: UserRound,
-    end: false,
-    description: 'Account settings',
   },
 ]
 
