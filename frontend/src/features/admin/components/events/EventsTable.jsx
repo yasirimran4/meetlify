@@ -1,6 +1,7 @@
-import { Eye, Pencil, Trash2, UploadCloud } from 'lucide-react'
+import { Eye, Users } from 'lucide-react'
 import Badge from '../../../../components/ui/Badge'
 import Button from '../../../../components/ui/Button'
+import DropdownMenu from '../../../../components/ui/DropdownMenu'
 import EmptyState from '../../../../components/ui/EmptyState'
 import { EVENT_STATUS } from '../../../../constants/events'
 import { formatEventDate, formatNumber } from '../../../../utils/format'
@@ -9,6 +10,7 @@ export function EventsTable({
   events,
   registrationCounts,
   onView,
+  onViewRegistrations,
   onEdit,
   onPublish,
   onDelete,
@@ -44,6 +46,7 @@ export function EventsTable({
           {events.map((event) => {
             const isDraft = event.status === EVENT_STATUS.DRAFT
             const isCompleted = event.status === EVENT_STATUS.COMPLETED
+            const registrationCount = registrationCounts[event.id]
 
             return (
               <tr key={event.id} className="hover:bg-surface-muted/60 transition-colors group">
@@ -72,56 +75,62 @@ export function EventsTable({
                 <td className="px-5 py-4 text-sm whitespace-nowrap text-text-secondary">
                   {formatEventDate(event.eventDateTime)}
                 </td>
-                <td className="px-5 py-4 text-sm text-text-primary">
-                  {registrationCounts[event.id] == null
-                    ? '—'
-                    : formatNumber(registrationCounts[event.id])}
+                <td className="px-5 py-4">
+                  <button
+                    type="button"
+                    onClick={() => onViewRegistrations(event)}
+                    className="inline-flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-semibold text-sky-700 transition-colors hover:bg-sky-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+                    title="View registrations for this event"
+                  >
+                    <Users className="h-4 w-4" aria-hidden="true" />
+                    {registrationCount == null ? '—' : formatNumber(registrationCount)}
+                  </button>
                 </td>
                 <td className="px-5 py-4">
                   <div className="flex flex-wrap items-center gap-2">
+                    <Button
+                      fullWidth={false}
+                      className="h-8 px-3 text-xs bg-sky-600 hover:bg-sky-700"
+                      onClick={() => onViewRegistrations(event)}
+                      title="View Registrations"
+                    >
+                      <Users className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
+                      Registrations
+                    </Button>
                     <Button
                       variant="outline"
                       fullWidth={false}
                       className="h-8 px-3 text-xs"
                       onClick={() => onView(event)}
-                      title="View Details"
+                      title="View event details"
                     >
                       <Eye className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                      View
+                      Manage
                     </Button>
-                    <Button
-                      variant="outline"
-                      fullWidth={false}
-                      className="h-8 px-3 text-xs"
-                      onClick={() => onEdit(event)}
-                      disabled={isCompleted}
-                      title="Edit Event"
-                    >
-                      <Pencil className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                      Edit
-                    </Button>
-                    <Button
-                      variant="outline"
-                      fullWidth={false}
-                      className="h-8 px-3 text-xs"
-                      onClick={() => onPublish(event)}
-                      disabled={!isDraft}
-                      title={isDraft ? "Publish Event" : "Already Published"}
-                    >
-                      <UploadCloud className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                      Publish
-                    </Button>
-                    <Button
-                      variant="outline"
-                      fullWidth={false}
-                      className="h-8 px-3 text-xs text-error hover:bg-error-muted hover:text-error hover:border-error-border"
-                      onClick={() => onDelete(event)}
-                      disabled={isCompleted}
-                      title="Delete Event"
-                    >
-                      <Trash2 className="h-3.5 w-3.5 mr-1.5" aria-hidden="true" />
-                      Delete
-                    </Button>
+                    <DropdownMenu
+                      triggerLabel={`More actions for ${event.title}`}
+                      items={[
+                        {
+                          key: 'edit',
+                          label: 'Edit event',
+                          disabled: isCompleted,
+                          onClick: () => onEdit(event),
+                        },
+                        {
+                          key: 'publish',
+                          label: isDraft ? 'Publish event' : 'Publish (already live)',
+                          disabled: !isDraft,
+                          onClick: () => onPublish(event),
+                        },
+                        {
+                          key: 'delete',
+                          label: 'Delete event',
+                          disabled: isCompleted,
+                          destructive: true,
+                          onClick: () => onDelete(event),
+                        },
+                      ]}
+                    />
                   </div>
                 </td>
               </tr>

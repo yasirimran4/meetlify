@@ -1,14 +1,16 @@
 import { useState, useCallback, useEffect } from 'react'
 import { fetchAllRegistrations } from '../services/registrationService'
+import { PAGE_SIZE_OPTIONS } from '../constants/events'
 import { parseApiError } from '../utils/apiError'
-import { extractPagination, normalizeRegistrations } from '../utils/registrations'
+import { extractPagination, normalizePagination, normalizeRegistrations } from '../utils/registrations'
 
 export function useGlobalRegistrations(initialParams = { page: 1, limit: 10 }) {
-  const [data, setData] = useState({ items: [], pagination: null })
+  const [data, setData] = useState({ items: [], pagination: normalizePagination(null, initialParams.limit) })
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(null)
 
   const [params, setParams] = useState(initialParams)
+  const pageSize = params.limit ?? PAGE_SIZE_OPTIONS[0]
 
   const loadRegistrations = useCallback(async (currentParams) => {
     setIsLoading(true)
@@ -16,10 +18,11 @@ export function useGlobalRegistrations(initialParams = { page: 1, limit: 10 }) {
     try {
       const response = await fetchAllRegistrations(currentParams)
       const payload = response ?? {}
+      const pageData = extractPagination(payload)
 
       setData({
         items: normalizeRegistrations(payload),
-        pagination: extractPagination(payload),
+        pagination: normalizePagination(pageData, currentParams.limit ?? PAGE_SIZE_OPTIONS[0]),
       })
     } catch (err) {
       setError(parseApiError(err).message || 'Failed to fetch registrations')
@@ -40,6 +43,10 @@ export function useGlobalRegistrations(initialParams = { page: 1, limit: 10 }) {
     setParams((prev) => ({ ...prev, page: newPage }))
   }, [])
 
+  const setPageSize = useCallback((nextSize) => {
+    setParams((prev) => ({ ...prev, limit: nextSize, page: 1 }))
+  }, [])
+
   const reload = useCallback(() => {
     loadRegistrations(params)
   }, [params, loadRegistrations])
@@ -50,8 +57,11 @@ export function useGlobalRegistrations(initialParams = { page: 1, limit: 10 }) {
     isLoading,
     error,
     params,
+    pageSize,
+    pageSizeOptions: PAGE_SIZE_OPTIONS,
     updateParams,
     changePage,
+    setPageSize,
     reload,
   }
 }

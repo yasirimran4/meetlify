@@ -5,6 +5,7 @@ export function normalizeRegistration(raw) {
   const reminderSent = raw.reminderSent ?? raw.reminder_sent ?? false
   const createdAt = raw.createdAt ?? raw.created_at
   const eventTitle = raw.eventTitle ?? raw.event_title ?? ''
+  const eventId = raw.eventId ?? raw.event_id ?? null
 
   return {
     id: raw.id,
@@ -18,6 +19,8 @@ export function normalizeRegistration(raw) {
     reminder_sent: Boolean(reminderSent),
     createdAt,
     created_at: createdAt,
+    eventId,
+    event_id: eventId,
     eventTitle,
     event_title: eventTitle,
   }
@@ -51,6 +54,36 @@ export function extractPagination(payload) {
   }
 
   return payload.pagination ?? payload.data?.pagination ?? null
+}
+
+export function normalizePagination(pageData, pageSize) {
+  if (!pageData) {
+    return {
+      page: 1,
+      totalPages: 1,
+      totalItems: 0,
+      hasNext: false,
+      hasPrevious: false,
+      start: 0,
+      end: 0,
+    }
+  }
+
+  const totalItems = pageData.total_items ?? pageData.totalItems ?? 0
+  const currentPage = pageData.page ?? 1
+  const limit = pageData.limit ?? pageSize ?? 10
+  const start = totalItems === 0 ? 0 : (currentPage - 1) * limit + 1
+  const end = Math.min(currentPage * limit, totalItems)
+
+  return {
+    page: currentPage,
+    totalPages: pageData.total_pages ?? pageData.totalPages ?? 1,
+    totalItems,
+    hasNext: pageData.has_next ?? pageData.hasNext ?? false,
+    hasPrevious: pageData.has_previous ?? pageData.hasPrevious ?? false,
+    start,
+    end,
+  }
 }
 
 export function normalizeRegistrations(payload) {

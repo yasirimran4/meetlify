@@ -5,15 +5,18 @@ import {
   Pencil,
   Trash2,
   UploadCloud,
+  Users,
   Video,
 } from 'lucide-react'
 import Badge from '../../../../components/ui/Badge'
 import Button from '../../../../components/ui/Button'
 import { EVENT_STATUS } from '../../../../constants/events'
-import { formatEventDate } from '../../../../utils/format'
+import { formatEventDate, formatNumber } from '../../../../utils/format'
 
 export default function EventDetailsHeader({
   event,
+  registrationCount = 0,
+  onViewRegistrations,
   onEdit,
   onPublish,
   onComplete,
@@ -55,6 +58,15 @@ export default function EventDetailsHeader({
       </div>
 
       <div className="flex flex-wrap gap-3">
+        <Button
+          fullWidth={false}
+          className="px-4 bg-sky-600 hover:bg-sky-700"
+          onClick={onViewRegistrations}
+        >
+          <Users className="h-4 w-4" aria-hidden="true" />
+          Registrations ({formatNumber(registrationCount)})
+        </Button>
+
         <Button
           variant="outline"
           fullWidth={false}
