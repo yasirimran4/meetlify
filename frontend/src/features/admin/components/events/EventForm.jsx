@@ -194,8 +194,8 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
                 </div>
                 <div className="space-y-3">
                   {(formData.speakers || []).map((speaker, index) => (
-                    <div key={`speaker-${index}`} className="flex items-center gap-2">
-                      <div className="flex-1">
+                    <div key={`speaker-${index}`} className="flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
                         <Input
                           id={`speaker-${index}`}
                           placeholder="e.g. Jane Doe"
@@ -209,7 +209,8 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="!h-11 shrink-0"
+                        fullWidth={false}
+                        className="!h-11 shrink-0 px-4"
                         onClick={() => removeNameField('speakers', index)}
                         disabled={isLoading || (formData.speakers || []).length <= 1}
                       >
@@ -222,7 +223,8 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="mt-3"
+                  fullWidth={false}
+                  className="mt-3 px-4"
                   onClick={() => addNameField('speakers')}
                   disabled={isLoading}
                 >
@@ -236,8 +238,8 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
                 </div>
                 <div className="space-y-3">
                   {(formData.organizers || []).map((organizer, index) => (
-                    <div key={`organizer-${index}`} className="flex items-center gap-2">
-                      <div className="flex-1">
+                    <div key={`organizer-${index}`} className="flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
                         <Input
                           id={`organizer-${index}`}
                           placeholder="e.g. Dr. Zobia Suhail"
@@ -250,7 +252,8 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
                         type="button"
                         variant="outline"
                         size="sm"
-                        className="!h-11 shrink-0"
+                        fullWidth={false}
+                        className="!h-11 shrink-0 px-4"
                         onClick={() => removeNameField('organizers', index)}
                         disabled={isLoading || (formData.organizers || []).length <= 1}
                       >
@@ -263,7 +266,8 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
                   type="button"
                   variant="outline"
                   size="sm"
-                  className="mt-3"
+                  fullWidth={false}
+                  className="mt-3 px-4"
                   onClick={() => addNameField('organizers')}
                   disabled={isLoading}
                 >

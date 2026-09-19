@@ -16,7 +16,7 @@ export default function Input({
         aria-invalid={Boolean(error)}
         aria-describedby={error ? `${id}-error` : undefined}
         className={[
-          'h-11 w-full rounded-lg border bg-surface px-3 text-sm text-text-primary',
+          'h-11 w-full min-w-0 rounded-lg border bg-surface px-3 text-sm text-text-primary',
           'placeholder:text-text-muted transition-colors',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary',
           error

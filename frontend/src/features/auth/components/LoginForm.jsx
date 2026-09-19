@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import Button from '../../../components/ui/Button'
 import Input from '../../../components/ui/Input'
 import Label from '../../../components/ui/Label'
@@ -153,24 +153,13 @@ export default function LoginForm({ onServerError }) {
           />
         </div>
 
-        <div className="flex items-center justify-between gap-4">
-          <Checkbox
-            id="remember-me"
-            label="Remember me"
-            checked={rememberMe}
-            onChange={(event) => setRememberMe(event.target.checked)}
-            disabled={isSubmitting}
-          />
-          <Link
-            to="#"
-            className="text-sm font-semibold text-text-primary transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:ring-offset-2"
-            onClick={(event) => event.preventDefault()}
-            aria-disabled="true"
-            tabIndex={-1}
-          >
-            Forgot Password?
-          </Link>
-        </div>
+        <Checkbox
+          id="remember-me"
+          label="Remember me"
+          checked={rememberMe}
+          onChange={(event) => setRememberMe(event.target.checked)}
+          disabled={isSubmitting}
+        />
 
         <Button type="submit" isLoading={isSubmitting} disabled={isSubmitting}>
           Sign In
