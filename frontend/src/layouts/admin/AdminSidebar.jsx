@@ -85,13 +85,13 @@ export default function AdminSidebar({
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {ADMIN_NAV_ITEMS.map(({ label, to, icon: Icon, end }) => (
+          {ADMIN_NAV_ITEMS.map(({ label, to, icon: Icon, end, description }) => (
             <NavLink
               key={to}
               to={to}
               end={end}
               onClick={handleNavClick}
-              title={collapsed ? label : undefined}
+              title={description ?? label}
               className={(state) => navLinkClassName(state, collapsed)}
             >
               <Icon className="h-5 w-5 shrink-0" aria-hidden="true" />

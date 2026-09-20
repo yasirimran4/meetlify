@@ -10,7 +10,20 @@ const STATUS_LABELS = {
   completed: 'Completed',
 }
 
-export default function Badge({ status, className = '' }) {
+export default function Badge({ status, children, className = '' }) {
+  if (children) {
+    return (
+      <span
+        className={[
+          'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ring-1 ring-inset',
+          className,
+        ].join(' ')}
+      >
+        {children}
+      </span>
+    )
+  }
+
   const normalized = String(status ?? 'draft').toLowerCase()
   const styles = STATUS_STYLES[normalized] ?? STATUS_STYLES.draft
   const label = STATUS_LABELS[normalized] ?? normalized

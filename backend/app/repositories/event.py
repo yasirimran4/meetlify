@@ -1,6 +1,8 @@
-from sqlalchemy import select , update ,delete , func
+from uuid import UUID
+
+from sqlalchemy import select, update, delete, func
 from models.event import Event
-from datetime import datetime,timezone, timedelta
+from datetime import datetime, timezone, timedelta
 import logging
 from models.event import Status
 from models.registration import Registration
@@ -18,6 +20,7 @@ class EventRepository:
             return event
         except Exception as e:
             logger.exception("DB Error. Event not created.") 
+            raise
 
     async def get_events(self, session, page: int = 1, limit: int = 10, search: str = None, status: Status = None):
         try:
@@ -52,6 +55,7 @@ class EventRepository:
             }
         except Exception as e:
             logger.exception("DB Error. Event not returned..")
+            raise
 
     async def get_upcoming_events(self ,page,limit,search, session):
         return await self.get_events(session, page, limit, search, Status.PUBLISHED)
@@ -59,12 +63,21 @@ class EventRepository:
     async def get_completed_events(self ,page,limit,search, session):
         return await self.get_events(session, page, limit, search, Status.COMPLETED)
 
-    async def get_single_event(self, session,event_id):
+    async def get_single_event(self, session, event_id):
         try:
             event = await session.execute(select(Event).where(Event.id == event_id))
             return event.scalar_one_or_none()
         except Exception as e:
-            logger.exception("DB Error. Event not returned..") 
+            logger.exception("DB Error. Event not returned..")
+            raise
+
+    async def get_event_by_public_id(self, session, public_id: UUID):
+        try:
+            event = await session.execute(select(Event).where(Event.public_id == public_id))
+            return event.scalar_one_or_none()
+        except Exception as e:
+            logger.exception("DB Error. Event not returned by public_id.")
+            raise
 
     async def update_event(self,session,event_id,payload):
         try:
@@ -73,6 +86,7 @@ class EventRepository:
             return event.scalar_one_or_none()
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
+            raise
 
     async def delete_event(self,session,event_id):
         try:
@@ -81,6 +95,7 @@ class EventRepository:
             return event.scalar_one_or_none()
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
+            raise
              
     async def upload_video_url(self,session,event_id,video_url):
         try:
@@ -89,6 +104,7 @@ class EventRepository:
             return event.scalar_one_or_none()
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
+            raise
 
     async def publish_event(self,session,event_id):
         try:
@@ -97,6 +113,16 @@ class EventRepository:
             return event.scalar_one_or_none()
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
+            raise
+
+    async def complete_event(self,session,event_id):
+        try:
+            event = await session.execute(update(Event).where(Event.id == event_id).values(status = Status.COMPLETED).returning(Event))
+            await session.commit()
+            return event.scalar_one_or_none()
+        except Exception as e:
+            logger.exception("DB Error. Event not returned..") 
+            raise
 
     async def get_all_registrations_by_event_id(self,event_id,session):
         try:
@@ -104,6 +130,7 @@ class EventRepository:
             return registrations.scalars().all()
         except Exception as e:
             print("DB Error: ",str(e))
+            raise
 
     async def list_registrations(self,event_id,page,limit,session):
         try:
@@ -112,6 +139,7 @@ class EventRepository:
             return registrations.scalars().all()
         except Exception as e:
             print("DB Error: ",str(e))
+            raise
 
     async def upcoming_events_count(self,session):
         try:
@@ -119,13 +147,15 @@ class EventRepository:
             return events.scalar()
         except Exception as e:
             print("DB Error: ",str(e)) 
+            raise
 
     async def completed_events_count(self,session):
         try:
             events = await session.execute(select(func.count()).where(Event.status == Status.COMPLETED,Event.event_date_time < datetime.now(timezone.utc)).select_from(Event))
             return events.scalar()
         except Exception as e:
-            print("DB Error: ",str(e))                  
+            print("DB Error: ",str(e))   
+            raise
 
     async def get_events_requiring_reminder(self, session):
         try:
@@ -141,6 +171,7 @@ class EventRepository:
             return events.scalars().all()
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
+            raise
                 
     async def complete_expired_events(self,session):
         try:
@@ -148,6 +179,7 @@ class EventRepository:
             await session.commit()
         except Exception as e:
             logger.exception("DB Error. Event not returned..") 
-                
+            raise
+            
                             
 event_repo = EventRepository()  

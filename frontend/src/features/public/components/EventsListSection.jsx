@@ -13,7 +13,13 @@ export default function EventsListSection({ title, description, fetchMethod, isP
       try {
         setIsLoading(true)
         const response = await fetchMethod({ page: 1, limit: 6 })
-        setEvents(response?.items || [])
+        // Strip status from public-facing event objects so status is not shown
+        const items = (response?.items || []).map((it) => {
+          const copy = { ...it }
+          if (copy.hasOwnProperty('status')) delete copy.status
+          return copy
+        })
+        setEvents(items)
       } catch (err) {
         setError('Failed to load events. Please try again later.')
       } finally {

@@ -55,3 +55,6 @@ logs/
 # Docker (local artifacts)
 # ======================
 docker-compose.override.yml
+
+# Celery Beat
+backend/app/celerybeat-schedule

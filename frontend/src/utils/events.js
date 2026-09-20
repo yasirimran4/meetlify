@@ -3,14 +3,32 @@ export function normalizeEventStatus(status) {
   return String(status).toLowerCase()
 }
 
+function normalizeNameList(value, fallback = []) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item ?? '').trim()).filter(Boolean)
+  }
+
+  if (typeof value === 'string') {
+    const trimmed = value.trim()
+    return trimmed ? [trimmed] : fallback
+  }
+
+  return fallback
+}
+
 export function normalizeEvent(raw) {
   if (!raw) return null
+
+  const speakers = normalizeNameList(raw.speakers, normalizeNameList(raw.speaker_name, []))
+  const organizers = normalizeNameList(raw.organizers, ['Dr. Zobia Suhail'])
 
   return {
     id: raw.id,
     title: raw.title ?? '',
     description: raw.description ?? '',
-    speakerName: raw.speaker_name ?? '',
+    speakerName: speakers[0] ?? '',
+    speakers,
+    organizers,
     status: normalizeEventStatus(raw.status),
     eventDateTime: raw.event_date_time,
     meetingLink: raw.meeting_link,

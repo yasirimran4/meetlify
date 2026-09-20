@@ -1,15 +1,18 @@
+import uuid
+
 from core.database import Base
-from sqlalchemy import Column, Integer,String,ForeignKey ,DateTime , UniqueConstraint,Boolean
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, UniqueConstraint, Boolean
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
-from time import timezone
-from sqlalchemy.orm import relationship 
+from sqlalchemy.orm import relationship
 
 class Registration(Base):
 
     __tablename__ = "registrations"
 
-    id = Column(Integer,primary_key=True,index=True)
-    name = Column(String(100),nullable=False) 
+    id = Column(Integer, primary_key=True, index=True)
+    public_id = Column(UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4, index=True)
+    name = Column(String(100), nullable=False) 
     email = Column(String(100),nullable=False) 
     current_role = Column(String(100))
     organization = Column(String(100))

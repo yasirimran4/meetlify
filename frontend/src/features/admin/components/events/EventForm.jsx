@@ -11,17 +11,30 @@ function formatDateTimeForInput(dateString) {
   if (!dateString) return ''
   const date = new Date(dateString)
   if (isNaN(date.getTime())) return ''
-  
-  // Format to YYYY-MM-DDThh:mm for datetime-local input
+
   const pad = (n) => n.toString().padStart(2, '0')
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
+
+function normalizeNameList(value) {
+  if (Array.isArray(value)) {
+    return value.map((item) => String(item ?? '').trim()).filter(Boolean)
+  }
+  if (typeof value === 'string') {
+    const trimmed = value.trim()
+    return trimmed ? [trimmed] : []
+  }
+  return []
+}
+
+const DEFAULT_ORGANIZERS = ['Dr. Zobia Suhail']
 
 export default function EventForm({ initialData, onSubmit, isLoading, apiError }) {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    speakerName: '',
+    speakers: [''],
+    organizers: DEFAULT_ORGANIZERS,
     meetingLink: '',
     eventDateTime: '',
     thumbnail: null,
@@ -31,16 +44,48 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
 
   useEffect(() => {
     if (initialData) {
+      const speakerValues = normalizeNameList(initialData.speakers.length ? initialData.speakers : initialData.speakerName)
+      const organizerValues = normalizeNameList(initialData.organizers.length ? initialData.organizers : DEFAULT_ORGANIZERS)
+
       setFormData({
         title: initialData.title || '',
         description: initialData.description || '',
-        speakerName: initialData.speakerName || '',
+        speakers: speakerValues.length ? speakerValues : [''],
+        organizers: organizerValues.length ? organizerValues : DEFAULT_ORGANIZERS,
         meetingLink: initialData.meetingLink || '',
         eventDateTime: formatDateTimeForInput(initialData.eventDateTime),
         thumbnail: initialData.thumbnailUrl || null,
       })
     }
   }, [initialData])
+
+  const addNameField = (field) => {
+    setFormData((prev) => ({ ...prev, [field]: [...(prev[field] || []), ''] }))
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: null }))
+    }
+  }
+
+  const updateNameField = (field, index, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: prev[field].map((item, itemIndex) => (itemIndex === index ? value : item)),
+    }))
+
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: null }))
+    }
+  }
+
+  const removeNameField = (field, index) => {
+    setFormData((prev) => {
+      const currentList = prev[field] || []
+      if (currentList.length <= 1) {
+        return { ...prev, [field]: [''] }
+      }
+      return { ...prev, [field]: currentList.filter((_, itemIndex) => itemIndex !== index) }
+    })
+  }
 
   const validate = () => {
     const newErrors = {}
@@ -50,9 +95,16 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
     if (!formData.description || formData.description.length < 100) {
       newErrors.description = 'Description must be at least 100 characters.'
     }
-    if (!formData.speakerName || formData.speakerName.length < 5) {
-      newErrors.speakerName = 'Speaker name must be at least 5 characters.'
+
+    const speakers = formData.speakers.map((name) => name.trim()).filter(Boolean)
+    if (speakers.length === 0) {
+      newErrors.speakers = 'At least one speaker name is required.'
     }
+
+    if (speakers.some((name) => name.length < 2)) {
+      newErrors.speakers = 'Speaker names must be at least 2 characters.'
+    }
+
     if (!formData.meetingLink || !/^https?:\/\/.+/.test(formData.meetingLink)) {
       newErrors.meetingLink = 'Must be a valid URL starting with http:// or https://'
     }
@@ -96,7 +148,7 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {apiError && <Alert title="Error" message={apiError} />}
-      
+
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,1fr)]">
         <div className="space-y-6">
           <Card>
@@ -135,19 +187,95 @@ export default function EventForm({ initialData, onSubmit, isLoading, apiError }
             <CardHeader>
               <h3 className="text-base font-semibold text-text-primary">Logistics</h3>
             </CardHeader>
-            <CardBody className="space-y-4">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <Label htmlFor="speakerName">Speaker Name</Label>
-                  <Input
-                    id="speakerName"
-                    placeholder="e.g. Jane Doe"
-                    value={formData.speakerName}
-                    onChange={handleChange('speakerName')}
-                    error={errors.speakerName}
-                    disabled={isLoading}
-                  />
+            <CardBody className="space-y-5">
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <Label>Speakers</Label>
                 </div>
+                <div className="space-y-3">
+                  {(formData.speakers || []).map((speaker, index) => (
+                    <div key={`speaker-${index}`} className="flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <Input
+                          id={`speaker-${index}`}
+                          placeholder="e.g. Jane Doe"
+                          value={speaker}
+                          onChange={(e) => updateNameField('speakers', index, e.target.value)}
+                          error={errors.speakers && index === 0 ? errors.speakers : null}
+                          disabled={isLoading}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        fullWidth={false}
+                        className="!h-11 shrink-0 px-4"
+                        onClick={() => removeNameField('speakers', index)}
+                        disabled={isLoading || (formData.speakers || []).length <= 1}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  fullWidth={false}
+                  className="mt-3 px-4"
+                  onClick={() => addNameField('speakers')}
+                  disabled={isLoading}
+                >
+                  + Add Speaker
+                </Button>
+              </div>
+
+              <div>
+                <div className="mb-2 flex items-center justify-between">
+                  <Label>Organizers</Label>
+                </div>
+                <div className="space-y-3">
+                  {(formData.organizers || []).map((organizer, index) => (
+                    <div key={`organizer-${index}`} className="flex items-start gap-2">
+                      <div className="min-w-0 flex-1">
+                        <Input
+                          id={`organizer-${index}`}
+                          placeholder="e.g. Dr. Zobia Suhail"
+                          value={organizer}
+                          onChange={(e) => updateNameField('organizers', index, e.target.value)}
+                          disabled={isLoading}
+                        />
+                      </div>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        fullWidth={false}
+                        className="!h-11 shrink-0 px-4"
+                        onClick={() => removeNameField('organizers', index)}
+                        disabled={isLoading || (formData.organizers || []).length <= 1}
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  fullWidth={false}
+                  className="mt-3 px-4"
+                  onClick={() => addNameField('organizers')}
+                  disabled={isLoading}
+                >
+                  + Add Organizer
+                </Button>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
                 <div>
                   <Label htmlFor="eventDateTime">Date & Time</Label>
                   <Input

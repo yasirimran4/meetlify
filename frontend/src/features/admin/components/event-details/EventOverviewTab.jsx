@@ -17,6 +17,16 @@ function DetailRow({ icon: Icon, label, children }) {
 }
 
 export default function EventOverviewTab({ event }) {
+  const speakerNames = Array.isArray(event?.speakers) && event.speakers.length > 0
+    ? event.speakers
+    : event?.speakerName
+      ? [event.speakerName]
+      : []
+
+  const organizerNames = Array.isArray(event?.organizers) && event.organizers.length > 0
+    ? event.organizers
+    : ['Dr. Zobia Suhail']
+
   return (
     <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,1fr)]">
       <Card>
@@ -40,8 +50,19 @@ export default function EventOverviewTab({ event }) {
           </div>
 
           <div className="divide-y divide-border">
-            <DetailRow icon={UserRound} label="Speaker">
-              {event.speakerName}
+            <DetailRow icon={UserRound} label={speakerNames.length > 1 ? 'Speakers' : 'Speaker'}>
+              <div className="space-y-1">
+                {speakerNames.map((name) => (
+                  <div key={name}>{name}</div>
+                ))}
+              </div>
+            </DetailRow>
+            <DetailRow icon={UserRound} label={organizerNames.length > 1 ? 'Organizers' : 'Organizer'}>
+              <div className="space-y-1">
+                {organizerNames.map((name) => (
+                  <div key={name}>{name}</div>
+                ))}
+              </div>
             </DetailRow>
             <DetailRow icon={MapPin} label="Google Meet">
               {event.meetingLink ? (

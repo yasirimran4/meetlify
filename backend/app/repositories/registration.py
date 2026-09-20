@@ -19,7 +19,7 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error.") 
-
+            raise e
     
 
     async def get_registration_by_email(self,event_id,email,session):
@@ -37,8 +37,9 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error.") 
- 
+            raise e
 
+ 
     async def get_registrations_count(self,session):
         try:
             registrations = await session.execute(select(func.count()).select_from(Registration))
@@ -46,6 +47,8 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error") 
+            raise e
+
              
 
     async def mark_reminder_sent(self,registration_id,session):
@@ -55,12 +58,15 @@ class RegitrationRepository:
 
         except Exception as e:
             logger.exception("DB Error.") 
-        
-                 
+            raise e
 
     async def get_all_registrations_global(self, page, limit, search, event_id, status, session):
         try:
-            query = select(Registration, Event.title.label("event_title")).join(Event, Registration.event_id == Event.id)
+            query = select(
+                Registration,
+                Event.title.label("event_title"),
+                Event.public_id.label("event_public_id"),
+            ).join(Event, Registration.event_id == Event.id)
             
             if search:
                 query = query.where(or_(Registration.name.ilike(f"%{search}%"), Registration.email.ilike(f"%{search}%")))
@@ -80,9 +86,9 @@ class RegitrationRepository:
             results = await session.execute(query)
             
             items = []
-            for reg, event_title in results:
+            for reg, event_title, event_public_id in results:
                 item_dict = {
-                    "id": reg.id,
+                    "id": reg.public_id,
                     "name": reg.name,
                     "email": reg.email,
                     "current_role": reg.current_role,
@@ -90,8 +96,8 @@ class RegitrationRepository:
                     "semester": reg.semester,
                     "reminder_sent": reg.reminder_sent,
                     "created_at": reg.created_at,
-                    "event_id": reg.event_id,
-                    "event_title": event_title
+                    "event_id": event_public_id,
+                    "event_title": event_title,
                 }
                 items.append(item_dict)
 

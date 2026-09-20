@@ -1,11 +1,14 @@
-import { CalendarDays, User, PlayCircle } from 'lucide-react'
+import { CalendarDays, User } from 'lucide-react'
 import { formatEventDate } from '../../../utils/format'
 import { Link } from 'react-router-dom'
 import Card from '../../../components/ui/Card'
-import Badge from '../../../components/ui/Badge'
 
-export default function PublicEventCard({ event, isPast }) {
-  const hasRecording = isPast && event.video_url
+export default function PublicEventCard({ event }) {
+  const speakerNames = Array.isArray(event?.speakers) && event.speakers.length > 0
+    ? event.speakers
+    : event?.speaker_name
+      ? [event.speaker_name]
+      : []
 
   return (
     <Link to={`/events/${event.id}`} className="group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded-xl block h-full">
@@ -22,15 +25,6 @@ export default function PublicEventCard({ event, isPast }) {
             <CalendarDays className="h-12 w-12 text-text-muted" />
           </div>
         )}
-        {/* removed dark gradient overlay to preserve thumbnail colors */}
-        <div className="absolute bottom-4 left-4 right-4 flex items-center justify-end">
-          {hasRecording && (
-            <Badge variant="success" className="gap-1 shadow-sm">
-              <PlayCircle className="h-3 w-3" />
-              Recording Available
-            </Badge>
-          )}
-        </div>
       </div>
       
       <div className="flex flex-1 flex-col p-5">
@@ -44,7 +38,7 @@ export default function PublicEventCard({ event, isPast }) {
           </div>
           <div className="flex items-center gap-2">
             <User className="h-4 w-4 shrink-0 text-text-muted" />
-            <span className="truncate">{event.speaker_name}</span>
+            <span className="truncate">{speakerNames.length > 0 ? speakerNames.join(', ') : '—'}</span>
           </div>
         </div>
       </div>

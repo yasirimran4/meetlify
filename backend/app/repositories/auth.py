@@ -16,7 +16,8 @@ class AuthRepository:
             return user.scalar_one_or_none()
         
         except Exception as e:
-            logger.exception("DB Error. User not found.")    
+            logger.exception("DB Error. User not found.") 
+            raise   
         
     async def find_user_by_id(self,id:int,session:AsyncSession):
         try:

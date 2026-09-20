@@ -6,6 +6,7 @@ import Button from '../../../components/ui/Button'
 import Card from '../../../components/ui/Card'
 import ConfirmDialog from '../../../components/ui/ConfirmDialog'
 import LoadingState from '../../../components/ui/LoadingState'
+import PageGuide from '../../../components/ui/PageGuide'
 import PageHeader from '../../../components/ui/PageHeader'
 import Pagination from '../../../components/ui/Pagination'
 import EventsToolbar from '../components/events/EventsToolbar'
@@ -46,6 +47,10 @@ export default function AdminEventsPage() {
     navigate(ADMIN_ROUTES.eventDetails(event.id))
   }
 
+  function handleViewRegistrations(event) {
+    navigate(ADMIN_ROUTES.eventRegistrations(event.id))
+  }
+
   function handleCreate() {
     navigate(ADMIN_ROUTES.eventCreate)
   }
@@ -75,7 +80,7 @@ export default function AdminEventsPage() {
     <div className="space-y-6">
       <PageHeader
         title="Events"
-        description="Manage and monitor all platform events."
+        description="Create events, publish them, and manage registrations for each one."
         actions={
           <Button fullWidth={false} className="px-4" onClick={handleCreate}>
             <Plus className="h-4 w-4" aria-hidden="true" />
@@ -83,6 +88,19 @@ export default function AdminEventsPage() {
           </Button>
         }
       />
+
+      <PageGuide title="Finding registrations">
+        Click the blue <strong>Registrations</strong> button on any event row, or use the count in
+        the Registrations column. You can also open{' '}
+        <button
+          type="button"
+          onClick={() => navigate(ADMIN_ROUTES.registrations)}
+          className="font-semibold underline underline-offset-2 hover:text-sky-950"
+        >
+          All Registrations
+        </button>{' '}
+        in the sidebar to see every attendee across events.
+      </PageGuide>
 
       {actionMessage ? (
         <div
@@ -125,6 +143,7 @@ export default function AdminEventsPage() {
                 events={events}
                 registrationCounts={registrationCounts}
                 onView={handleView}
+                onViewRegistrations={handleViewRegistrations}
                 onEdit={handleEdit}
                 onPublish={handlePublish}
                 onDelete={handleDeleteRequest}

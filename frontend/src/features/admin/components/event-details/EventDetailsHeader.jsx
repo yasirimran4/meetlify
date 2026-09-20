@@ -1,25 +1,34 @@
 import {
   CalendarDays,
+  CheckCircle2,
   ExternalLink,
   Pencil,
   Trash2,
   UploadCloud,
+  Users,
   Video,
 } from 'lucide-react'
 import Badge from '../../../../components/ui/Badge'
 import Button from '../../../../components/ui/Button'
 import { EVENT_STATUS } from '../../../../constants/events'
-import { formatEventDate } from '../../../../utils/format'
+import { formatEventDate, formatNumber } from '../../../../utils/format'
 
 export default function EventDetailsHeader({
   event,
+  registrationCount = 0,
+  onViewRegistrations,
   onEdit,
   onPublish,
+  onComplete,
   onDelete,
   isPublishing,
+  isCompleting,
 }) {
   const isDraft = event.status === EVENT_STATUS.DRAFT
   const isCompleted = event.status === EVENT_STATUS.COMPLETED
+  const isPublished = event.status === EVENT_STATUS.PUBLISHED
+  const eventHasEnded = event.eventDateTime && new Date(event.eventDateTime) <= new Date()
+  const canMarkCompleted = isPublished && eventHasEnded
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -50,6 +59,15 @@ export default function EventDetailsHeader({
 
       <div className="flex flex-wrap gap-3">
         <Button
+          fullWidth={false}
+          className="px-4 bg-sky-600 hover:bg-sky-700"
+          onClick={onViewRegistrations}
+        >
+          <Users className="h-4 w-4" aria-hidden="true" />
+          Registrations ({formatNumber(registrationCount)})
+        </Button>
+
+        <Button
           variant="outline"
           fullWidth={false}
           className="px-4"
@@ -71,11 +89,20 @@ export default function EventDetailsHeader({
             <UploadCloud className="h-4 w-4" aria-hidden="true" />
             Publish
           </Button>
-        ) : (
-          <Button variant="outline" fullWidth={false} className="px-4" disabled>
-            Unpublish unavailable
+        ) : null}
+
+        {canMarkCompleted ? (
+          <Button
+            fullWidth={false}
+            className="px-4"
+            onClick={onComplete}
+            isLoading={isCompleting}
+            disabled={isCompleting}
+          >
+            <CheckCircle2 className="h-4 w-4" aria-hidden="true" />
+            Mark as Completed
           </Button>
-        )}
+        ) : null}
 
         <Button
           variant="outline"
