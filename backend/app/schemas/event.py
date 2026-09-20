@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field, AnyUrl, field_validator, model_validator
 from typing import Annotated, Any
 from datetime import datetime, timezone
+from uuid import UUID
 from models.event import Status
 
 DEFAULT_EVENT_ORGANIZERS = ["Dr. Zobia Suhail"]
@@ -108,7 +109,7 @@ class CreateEventRequest(BaseModel):
 
 
 class EventResponse(BaseModel):
-    id: int
+    id: UUID
     title: str
     description: str
     speaker_name: str | None = None

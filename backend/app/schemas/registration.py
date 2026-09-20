@@ -1,6 +1,7 @@
-from pydantic import EmailStr , Field ,BaseModel
-from typing import Annotated 
+from pydantic import EmailStr, Field, BaseModel
+from typing import Annotated
 from datetime import datetime
+from uuid import UUID
 class CreateRegistration(BaseModel):
     name : Annotated[str,Field(...,min_length=3,max_length=100,title="Member Name",description="Name of Member")] 
     email : Annotated[EmailStr,Field(...)]
@@ -10,7 +11,7 @@ class CreateRegistration(BaseModel):
 
 
 class RegistrationResponse(BaseModel):
-    id: int
+    id: UUID
     current_role: str
     organization: str
     reminder_sent: bool
@@ -36,7 +37,7 @@ class RegistrationList(BaseModel):
     pagination : RegistrationPagination     #    Nested Model
 
 class GlobalRegistrationResponse(RegistrationResponse):
-    event_id: int
+    event_id: UUID
     event_title: str
 
 class GlobalRegistrationList(BaseModel):

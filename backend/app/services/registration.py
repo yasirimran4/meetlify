@@ -1,104 +1,107 @@
+from uuid import UUID
+
 from exceptions.event import EventNotFoundError
-# from tasks.email_task import send_registration_email      Using n8n email service for now Date : 19-July-2026
 from models.registration import Registration
 from repositories.registration import regitration_repo
-from .event import event_service
 from repositories.event import event_repo
 from core.redis import redis_client
 from exceptions.registration import *
 from fastapi import HTTPException
 from schemas.registration import GlobalRegistrationResponse
+from utils.public_id import serialize_public_id
+
 
 class RegitrationService:
-    async def register_event(self,event_id,request,session):   # Rate limit
-
+    async def register_event(self, event_public_id: UUID, request, session):
         rate_limit_key = f"rate_limit:register:{request.email}"
 
         count = await redis_client.incr(rate_limit_key)
 
         if count == 1:
-            await redis_client.expire(rate_limit_key,300)
+            await redis_client.expire(rate_limit_key, 300)
 
         if count > 5:
-            if count > 5:
-                raise HTTPException(status_code=429,detail="Too many request. Try Again Later")    
+            raise HTTPException(status_code=429, detail="Too many request. Try Again Later")
 
-        event = await event_service.get_single_event(session,event_id)
-
+        event = await event_repo.get_event_by_public_id(session, event_public_id)
         if event is None:
             raise EventNotFoundError()
-        
-        existing_registration = await regitration_repo.get_registration_by_email(event_id,email=request.email,session=session)
-        
+
+        existing_registration = await regitration_repo.get_registration_by_email(
+            event.id,
+            email=request.email,
+            session=session,
+        )
+
         if existing_registration:
             raise DuplicateRegistrationError()
-        
+
         registration = Registration(
-            name = request.name,
-            email = request.email,
-            current_role = request.current_role,
-            organization = request.organization,
-            semester = request.semester,
-            event_id = event_id
-        ) 
- 
-        registration_response = await regitration_repo.register_event(registration,session)
+            name=request.name,
+            email=request.email,
+            current_role=request.current_role,
+            organization=request.organization,
+            semester=request.semester,
+            event_id=event.id,
+        )
 
-        event_date_time = event.get("event_date_time", "")
-        if hasattr(event_date_time, "isoformat"):
-            event_date_time = event_date_time.isoformat()
-
-        # send_registration_email.delay(
-        #     email=registration.email,
-        #     name=registration.name,
-        #     event_title=event.get("title", ""),
-        #     meeting_link=event.get("meeting_link", ""),
-        #     speaker_name=event.get("speaker_name", ""),
-        #     event_date_time=event_date_time
-        # )
-         
+        registration_response = await regitration_repo.register_event(registration, session)
 
         return {
-            "id": registration_response.id,
+            "id": serialize_public_id(registration_response.public_id),
             "name": registration_response.name,
             "email": registration_response.email,
             "current_role": registration_response.current_role,
             "organization": registration_response.organization,
             "semester": registration_response.semester,
             "reminder_sent": registration_response.reminder_sent,
-            "event_id": registration_response.event_id,
-            "created_at": registration_response.created_at.isoformat() if registration_response.created_at else None
+            "event_id": serialize_public_id(event.public_id),
+            "created_at": registration_response.created_at.isoformat()
+            if registration_response.created_at
+            else None,
         }
-    
-    async def dashboard(self,session):
-        total_registrations = await regitration_repo.get_registrations_count(session) 
+
+    async def dashboard(self, session):
+        total_registrations = await regitration_repo.get_registrations_count(session)
         upcoming_events = await event_repo.upcoming_events_count(session=session)
         completed_events = await event_repo.completed_events_count(session=session)
 
-        return {"total_events" : upcoming_events + completed_events, "upcoming_events" : upcoming_events,"completed_events": completed_events,"total_registrations":total_registrations}
-
-    async def list_all_registrations(self, page, limit, search, event_id, status, session):
-        # We can implement caching if needed, but since it has many filters, direct DB query is safer for now
-        registrations_data = await regitration_repo.get_all_registrations_global(page, limit, search, event_id, status, session)
-        
-        # We don't need to model_validate if we constructed the dict directly in repo, 
-        # but to be safe and use schemas, we can validate.
-        # Since repo returns dictionary list, we can just return it as it matches the schema.
-        response = [
-            GlobalRegistrationResponse(**item)
-            for item in registrations_data["items"]
-        ]
-        
         return {
-            "items": response,
-            "pagination": registrations_data["pagination"]
+            "total_events": upcoming_events + completed_events,
+            "upcoming_events": upcoming_events,
+            "completed_events": completed_events,
+            "total_registrations": total_registrations,
         }
 
-    
-    async def pending_registrations_reminder(self,event_id,session):
-        return await regitration_repo.pending_registrations_reminder(event_id=event_id,session=session)
+    async def list_all_registrations(self, page, limit, search, event_public_id, status, session):
+        internal_event_id = None
+        if event_public_id:
+            event = await event_repo.get_event_by_public_id(session, event_public_id)
+            if event is None:
+                raise EventNotFoundError()
+            internal_event_id = event.id
 
-    async def mark_reminder_sent(self,registration_id,session):
-        return await regitration_repo.mark_reminder_sent(registration_id,session=session)      
- 
+        registrations_data = await regitration_repo.get_all_registrations_global(
+            page,
+            limit,
+            search,
+            internal_event_id,
+            status,
+            session,
+        )
+
+        response = [GlobalRegistrationResponse(**item) for item in registrations_data["items"]]
+
+        return {
+            "items": response,
+            "pagination": registrations_data["pagination"],
+        }
+
+    async def pending_registrations_reminder(self, event_id, session):
+        return await regitration_repo.pending_registrations_reminder(event_id=event_id, session=session)
+
+    async def mark_reminder_sent(self, registration_id, session):
+        return await regitration_repo.mark_reminder_sent(registration_id, session=session)
+
+
 registration_service = RegitrationService()

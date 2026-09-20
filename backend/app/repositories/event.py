@@ -1,6 +1,8 @@
-from sqlalchemy import select , update ,delete , func
+from uuid import UUID
+
+from sqlalchemy import select, update, delete, func
 from models.event import Event
-from datetime import datetime,timezone, timedelta
+from datetime import datetime, timezone, timedelta
 import logging
 from models.event import Status
 from models.registration import Registration
@@ -61,12 +63,20 @@ class EventRepository:
     async def get_completed_events(self ,page,limit,search, session):
         return await self.get_events(session, page, limit, search, Status.COMPLETED)
 
-    async def get_single_event(self, session,event_id):
+    async def get_single_event(self, session, event_id):
         try:
             event = await session.execute(select(Event).where(Event.id == event_id))
             return event.scalar_one_or_none()
         except Exception as e:
-            logger.exception("DB Error. Event not returned..") 
+            logger.exception("DB Error. Event not returned..")
+            raise
+
+    async def get_event_by_public_id(self, session, public_id: UUID):
+        try:
+            event = await session.execute(select(Event).where(Event.public_id == public_id))
+            return event.scalar_one_or_none()
+        except Exception as e:
+            logger.exception("DB Error. Event not returned by public_id.")
             raise
 
     async def update_event(self,session,event_id,payload):

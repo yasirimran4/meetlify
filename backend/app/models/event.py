@@ -1,6 +1,8 @@
+import uuid
+
 from core.database import Base
 from sqlalchemy import Column, Integer, String, DateTime, Enum as SQLEnum, Text, text
-from sqlalchemy.dialects.postgresql import ARRAY
+from sqlalchemy.dialects.postgresql import ARRAY, UUID
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship
 from enum import Enum
@@ -20,6 +22,7 @@ class Event(Base):
     __tablename__ = "events"
 
     id = Column(Integer, primary_key=True, index=True)
+    public_id = Column(UUID(as_uuid=True), unique=True, nullable=False, default=uuid.uuid4, index=True)
     title = Column(String(255), nullable=False)
     description = Column(Text, nullable=False)
     speaker_name = Column(String(100), nullable=False)
